@@ -1,0 +1,52 @@
+<nav class="navbar navbar-dark bg-dark">
+  <span class="navbar-brand mb-0 h1 text-warning">
+    Alex's Lockdown Running Heat Map
+  </span>
+  <span class="navbar-text"
+        *ngIf="authenticating">
+    Authenticating...
+  </span>
+
+  <span class="navbar-text"
+        *ngIf="loading">
+    Loading...
+  </span>
+
+  <span class="navbar-text"
+        *ngIf="loaded">
+    {{distanceToMiles(totalDistance) | number:'1.0-0'}} Miles<span class="text-warning"> | </span>
+    {{secondsToHours(totalSeconds)| number:'1.0-0'}} Hours<span class="text-warning"> | </span>
+    {{totalCalories}} Calories<span class="text-warning"> | </span>
+    {{polylines.length}} Runs<span class="text-warning"></span>
+  </span>
+
+</nav>
+
+<div class="d-flex justify-content-center mt-5"
+     *ngIf="authenticating || loading">
+  <div class="spinner-border text-warning"
+       role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+<div class="controls"
+     *ngIf="loaded">
+  <div class="slider-container">
+    <input type="range"
+           min="1"
+           [attr.max]="endRange"
+           [(ngModel)]="rangePosition"
+           (ngModelChange)="sliderChanged()"
+           class="slider"
+           id="dateSlider">
+  </div>
+
+  <span class="small d-flex justify-content-center text-warning">Showing {{rangePosition}} of {{endRange}}</span>
+</div>
+
+<div class="map-container">
+  <div class="map-frame">
+    <div id="map"></div>
+  </div>
+</div>
