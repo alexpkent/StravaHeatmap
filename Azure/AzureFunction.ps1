@@ -16,8 +16,8 @@ Write-Host $stravaData
 
 $now = [DateTimeOffset]::Now.ToUnixTimeSeconds()
 
-$clientId = ""
-$clientSecret = ""
+$clientId = "44881"
+$clientSecret = "de5330ef48503f576b745e9dd790dcf11fcc7b01"
 
 if ($stravaData.expires_at -gt $now) {
     Write-Host 'Current token is valid, returning it for use'

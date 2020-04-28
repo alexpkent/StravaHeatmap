@@ -1,6 +1,6 @@
 <nav class="navbar navbar-dark bg-dark">
   <span class="navbar-brand mb-0 h1 text-warning">
-    Alex's Lockdown Running Heat Map
+    Alex's Strava Heat Map
   </span>
   <span class="navbar-text"
         *ngIf="authenticating">
@@ -16,8 +16,8 @@
         *ngIf="loaded">
     {{distanceToMiles(totalDistance) | number:'1.0-0'}} Miles<span class="text-warning"> | </span>
     {{secondsToHours(totalSeconds)| number:'1.0-0'}} Hours<span class="text-warning"> | </span>
-    {{totalCalories}} Calories<span class="text-warning"> | </span>
-    {{polylines.length}} Runs<span class="text-warning"></span>
+    {{runCount}} Runs<span class="text-warning"></span><span class="text-warning"> | </span>
+    {{rideCount}} Rides<span class="text-warning"></span>
   </span>
 
 </nav>

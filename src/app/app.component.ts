@@ -11,16 +11,16 @@ declare var L: any;
 export class AppComponent implements OnInit {
   title = 'StravaHeatmap';
   activities: any;
+  runCount = 0;
+  rideCount = 0;
   totalDistance = 0;
   totalSeconds = 0;
-  totalCalories = 0;
   authenticating = false;
   loading = false;
   loaded = false;
   endRange = 0;
   rangePosition = 0;
   map: any;
-  coronaStartDate = new Date(2020, 1, 12);
   polylines = [];
 
   constructor(private stravaService: StravaService) {}
@@ -32,38 +32,30 @@ export class AppComponent implements OnInit {
       this.authenticating = false;
       this.loading = true;
 
-      this.stravaService
-        .getActivities(this.coronaStartDate)
-        .then((activities: any[]) => {
-          this.activities = activities;
+      this.stravaService.getActivities().then((activities: any[]) => {
+        this.activities = activities;
 
-          this.loading = false;
-          this.loaded = true;
+        this.loading = false;
+        this.loaded = true;
 
-          this.loadHeatmap();
-        });
+        this.loadHeatmap();
+      });
     });
   }
 
   sliderChanged() {
-    console.log(this.rangePosition);
-
     for (let i = 0; i < this.polylines.length; i++) {
       const polyline = this.polylines[i];
 
       if (i + 1 <= this.rangePosition) {
         // include run
         if (!polyline.visible) {
-          console.log('Adding run ' + i);
-
           polyline.addTo(this.map);
           polyline.visible = true;
         }
       } else if (i + 1 > this.rangePosition) {
         if (polyline.visible) {
           // remove run
-          console.log('Removing run ' + i);
-
           polyline.remove(this.map);
           polyline.visible = false;
         }
@@ -73,8 +65,8 @@ export class AppComponent implements OnInit {
 
   private async loadHeatmap() {
     this.map = L.map('map', {
-      center: [50.844227, -0.144671],
-      zoom: 13
+      center: [50.883269, -0.135436],
+      zoom: 11
     });
 
     const tiles = L.tileLayer(
@@ -88,46 +80,16 @@ export class AppComponent implements OnInit {
 
     tiles.addTo(this.map);
 
-    const activityStreams = [];
-    await Promise.all(
-      this.activities.map(async (activity: { id: number }) => {
-        console.log('getting activity' + activity.id);
-        const stream: any = await this.stravaService.getActivityStream(
-          activity.id
-        );
-
-        console.log('loaded activity' + activity.id);
-        activityStreams.push(stream);
-      })
-    );
-
-    console.log('adding runs to map');
-    this.createPolylines(activityStreams);
+    this.createPolylines(this.activities);
     this.sortPolylines();
     this.sliderChanged();
-
-    // this.activities.forEach((activity) => {
-    //   this.stravaService.getActivityStream(activity.id).then((stream: any) => {
-    //     const coordinates = L.Polyline.fromEncoded(
-    //       stream.map.summary_polyline
-    //     ).getLatLngs();
-    //     const polyline = L.polyline(coordinates, {
-    //       color: 'red',
-    //       weight: 2,
-    //       opacity: 0.7,
-    //       visible: true,
-    //       activity: stream
-    //     }).addTo(this.map);
-    //     this.polylines.push(polyline);
-    //   });
-    // });
   }
 
   private createPolylines(activityStreams: any[]) {
     activityStreams.forEach((stream) => {
       this.processActivity(stream);
 
-      if (!stream.map.polyline) {
+      if (!stream.map.summary_polyline) {
         return;
       }
 
@@ -143,7 +105,6 @@ export class AppComponent implements OnInit {
       polyline.activity = stream;
 
       this.polylines.push(polyline);
-      console.log('polyline count' + this.polylines.length);
     });
 
     this.endRange = this.polylines.length;
@@ -160,10 +121,14 @@ export class AppComponent implements OnInit {
   }
 
   private processActivity(activity) {
+    this.totalDistance += activity.distance;
+    this.totalSeconds += activity.elapsed_time;
+
     if (activity.type === 'Run') {
-      this.totalDistance += activity.distance;
-      this.totalSeconds += activity.elapsed_time;
-      this.totalCalories += activity.calories;
+      this.runCount += 1;
+    }
+    if (activity.type === 'Ride') {
+      this.rideCount += 1;
     }
   }
 
