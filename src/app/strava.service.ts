@@ -1,11 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {
-  BlobServiceClient,
-  BlockBlobClient,
-  BlobClient,
-  ContainerClient
-} from '@azure/storage-blob';
+import { BlobServiceClient } from '@azure/storage-blob';
 import { IStravaTokenInfo } from './IStravaTokenInfo';
 
 @Injectable({
@@ -24,7 +19,7 @@ export class StravaService {
 
   constructor(private http: HttpClient) {}
 
-  getAuthToken() {
+  async getAuthToken() {
     const blobService = new BlobServiceClient(this.azureBlobConnectionString);
     const containerClient = blobService.getContainerClient(
       this.azureContainerName
@@ -35,48 +30,46 @@ export class StravaService {
 
     console.log('Downloading token');
 
-    return blobClient.download().then((blobData: any) => {
-      return blobData.blobBody.then((blob) => {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsText(blob);
-          reader.onload = () => {
-            tokenInfo = JSON.parse(reader.result as string);
-            console.log(tokenInfo);
+    const blobData = await blobClient.download();
+    const blob = await blobData.blobBody;
 
-            const now = Date.now() / 1000;
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsText(blob);
+      reader.onload = async () => {
+        tokenInfo = JSON.parse(reader.result as string);
+        console.log(tokenInfo);
 
-            if (tokenInfo.expires_at > now) {
-              console.log('Current token is valid, returning it for use');
-              this.authToken = tokenInfo.access_token;
+        const now = Date.now() / 1000;
 
-              resolve();
-            } else {
-              console.log('Current token is expired, refreshing');
+        if (tokenInfo.expires_at > now) {
+          console.log('Current token is valid');
+          this.authToken = tokenInfo.access_token;
 
-              return this.http
-                .post(
-                  // tslint:disable-next-line:max-line-length
-                  `https://www.strava.com/api/v3/oauth/token?client_id=${this.stravaClientId}&client_secret=${this.stravaClientSecret}&grant_type=refresh_token&refresh_token=${tokenInfo.refresh_token}`,
-                  null
-                )
-                .toPromise()
-                .then((renewal: IStravaTokenInfo) => {
-                  this.authToken = renewal.access_token;
+          resolve();
+        } else {
+          console.log('Current token is expired, refreshing');
 
-                  console.log('Uploading new token');
-                  containerClient.uploadBlockBlob(
-                    this.azureBlobName,
-                    JSON.stringify(renewal),
-                    new Blob([JSON.stringify(renewal)]).size
-                  );
+          const renewal = (await this.http
+            .post(
+              // tslint:disable-next-line:max-line-length
+              `https://www.strava.com/api/v3/oauth/token?client_id=${this.stravaClientId}&client_secret=${this.stravaClientSecret}&grant_type=refresh_token&refresh_token=${tokenInfo.refresh_token}`,
+              null
+            )
+            .toPromise()) as IStravaTokenInfo;
 
-                  resolve();
-                });
-            }
-          };
-        });
-      });
+          this.authToken = renewal.access_token;
+
+          console.log('Uploading new token');
+          containerClient.uploadBlockBlob(
+            this.azureBlobName,
+            JSON.stringify(renewal),
+            new Blob([JSON.stringify(renewal)]).size
+          );
+
+          resolve();
+        }
+      };
     });
   }
 

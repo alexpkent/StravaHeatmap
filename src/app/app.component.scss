@@ -1,5 +1,5 @@
 .map-container {
-  height: calc(100vh - 110px);
+  height: calc(100vh - 115px);
 }
 
 .map-frame {
@@ -46,4 +46,22 @@
   border-radius: 50%;
   background: #ffc107;
   cursor: pointer;
+}
+
+.legend {
+  display: inline-block;
+  padding: 0 .4em;
+  font-size: 75%;
+  text-align: center;
+  vertical-align: baseline;
+  color: white;
+}
+
+.legend.run {
+  background: #E63419;
+}
+
+.legend.ride {
+  background: #2B54D4;
+  margin-right: 25px;
 }

@@ -22,25 +22,28 @@ export class AppComponent implements OnInit {
   rangePosition = 0;
   map: any;
   polylines = [];
+  rideColor = '#2B54D4';
+  runColor = '#E63419';
 
   constructor(private stravaService: StravaService) {}
 
   ngOnInit(): void {
+    this.load();
+  }
+
+  private async load() {
     this.authenticating = true;
 
-    this.stravaService.getAuthToken().then((_) => {
-      this.authenticating = false;
-      this.loading = true;
+    await this.stravaService.getAuthToken();
+    this.authenticating = false;
+    this.loading = true;
 
-      this.stravaService.getActivities().then((activities: any[]) => {
-        this.activities = activities;
+    this.activities = await this.stravaService.getActivities();
 
-        this.loading = false;
-        this.loaded = true;
+    this.loading = false;
+    this.loaded = true;
 
-        this.loadHeatmap();
-      });
-    });
+    this.loadHeatmap();
   }
 
   sliderChanged() {
@@ -73,6 +76,7 @@ export class AppComponent implements OnInit {
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
         maxZoom: 19,
+        opacity: 0.7,
         attribution:
           '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }
@@ -97,9 +101,9 @@ export class AppComponent implements OnInit {
         stream.map.summary_polyline
       ).getLatLngs();
       const polyline = L.polyline(coordinates, {
-        color: 'red',
+        color: stream.type === 'Run' ? this.runColor : this.rideColor,
         weight: 2,
-        opacity: 0.7
+        opacity: 0.9
       });
       polyline.visible = false;
       polyline.activity = stream;
