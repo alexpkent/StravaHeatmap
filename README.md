@@ -4,6 +4,8 @@ Similar to the paid version from Strava this will overlay all Strava map activit
 
 An angular SPA hosted/backed by an Azure Storage Account.
 
+![site image](screenshots/site.png)
+
 ## Azure Setup
 
 - Azure Storage Account
