@@ -76,7 +76,7 @@ export class AppComponent implements OnInit {
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
         maxZoom: 19,
-        opacity: 0.7,
+        opacity: 0.5,
         attribution:
           '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }
@@ -103,7 +103,7 @@ export class AppComponent implements OnInit {
       const polyline = L.polyline(coordinates, {
         color: stream.type === 'Run' ? this.runColor : this.rideColor,
         weight: 2,
-        opacity: 0.9
+        opacity: 0.6
       });
       polyline.visible = false;
       polyline.activity = stream;
