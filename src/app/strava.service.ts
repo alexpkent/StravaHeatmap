@@ -9,11 +9,10 @@ import { IStravaTokenInfo } from './IStravaTokenInfo';
 export class StravaService {
   private authToken: string;
 
-  private stravaClientId = '44881';
-  private stravaClientSecret = 'de5330ef48503f576b745e9dd790dcf11fcc7b01';
+  private stravaClientId = '';
+  private stravaClientSecret = '';
   // tslint:disable-next-line:max-line-length
-  private azureBlobConnectionString =
-    'https://storageaccounttestab9ca.blob.core.windows.net/?sv=2019-02-02&ss=b&srt=sco&sp=rw&se=2025-04-27T16:00:28Z&st=2020-04-27T08:00:28Z&spr=https,http&sig=v8NZYLWz4fw0qPamsjnMDOfIWebMY4RROMAwbHhqjm0%3D';
+  private azureBlobConnectionString = '';
   private azureContainerName = 'strava';
   private azureBlobName = 'strava.json';
 
