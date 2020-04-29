@@ -1,27 +1,39 @@
-# StravaHeatmap
+## Strava Heatmap
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.20.
+Similar to the paid version from Strava this will overlay all Strava map activity on a [Leaflet](https://leafletjs.com/) map with summary data and activity selection controls.
 
-## Development server
+An angular SPA hosted/backed by an Azure Storage Account.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Azure Setup
 
-## Code scaffolding
+- Azure Storage Account
+  - Add container called `strava`
+  - Add file called `strava.json`
+  - Enable CORS
+  - Add account level SAS with only Blob | Read, Write and use 'Blob service SAS URL'
+  - Enable static web hosting
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Upload the strava token to `strava.json` in the format of:
 
-## Build
+```
+access_token: "504d1ffc24e01c218a3e08272201eb1ef1e720fd"
+expires_at: 1587995060
+expires_in: 21600
+refresh_token: "0d0b91604caf4fa3ae4f425044c554756756a954"
+token_type: "Bearer"
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## Code Settings
 
-## Running unit tests
+- `app.component.ts` needs the following:
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+  - `mapCenter` - LatLong coordinates to center the map on load, i.e. the area most the activities exist.
 
-## Running end-to-end tests
+- `strava.service.ts` needs the following:
+  - `stravaClientId` - The client ID of the Strava API app on the Strava profile page
+  - `stravaClientSecret` - The secret of the Strava API app on the Strava profile page
+  - `azureBlobConnectionString` - The Azure storage connection string to for the SAS token created above.
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+## Deployment
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+- Upload dist folder contents from `ng build --prod` to the `$web` container created for the static web hosting

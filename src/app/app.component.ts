@@ -9,7 +9,7 @@ declare var L: any;
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'StravaHeatmap';
+  private mapCenter = [50.883269, -0.135436];
   activities: any;
   runCount = 0;
   rideCount = 0;
@@ -68,7 +68,7 @@ export class AppComponent implements OnInit {
 
   private async loadHeatmap() {
     this.map = L.map('map', {
-      center: [50.883269, -0.135436],
+      center: this.mapCenter,
       zoom: 11
     });
 

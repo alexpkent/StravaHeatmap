@@ -1,5 +1,5 @@
 .map-container {
-  height: calc(100vh - 115px);
+  height: calc(100vh - 109px);
 }
 
 .map-frame {
@@ -15,7 +15,7 @@
 }
 
 .controls {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .slider {
@@ -53,7 +53,7 @@
   padding: 0 .4em;
   font-size: 75%;
   text-align: center;
-  vertical-align: baseline;
+  vertical-align: top;
   color: white;
 }
 
@@ -63,5 +63,6 @@
 
 .legend.ride {
   background: #2B54D4;
+  margin-left: 10px;
   margin-right: 25px;
 }
