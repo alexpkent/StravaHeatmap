@@ -24,6 +24,9 @@ export class AppComponent implements OnInit {
   polylines = [];
   rideColor = '#2B54D4';
   runColor = '#E63419';
+  showRuns = true;
+  showRides = true;
+  visibleCount = 0;
 
   constructor(private stravaService: StravaService) {}
 
@@ -46,23 +49,42 @@ export class AppComponent implements OnInit {
     this.loadHeatmap();
   }
 
-  sliderChanged() {
+  filterChanged() {
+    this.visibleCount = 0;
+
     for (let i = 0; i < this.polylines.length; i++) {
       const polyline = this.polylines[i];
+      this.setPolylineVisibility(polyline, i);
+    }
+  }
 
-      if (i + 1 <= this.rangePosition) {
-        // include run
-        if (!polyline.visible) {
-          polyline.addTo(this.map);
-          polyline.visible = true;
-        }
-      } else if (i + 1 > this.rangePosition) {
-        if (polyline.visible) {
-          // remove run
-          polyline.remove(this.map);
-          polyline.visible = false;
-        }
-      }
+  private setPolylineVisibility(polyline: any, index: number) {
+    const showActivityType =
+      (this.isRun(polyline.activity) && this.showRuns) ||
+      (this.isRide(polyline.activity) && this.showRides);
+
+    const showRange = index + 1 <= this.rangePosition;
+
+    if (showActivityType && showRange) {
+      this.showPolyline(polyline);
+    } else {
+      this.hidePolyline(polyline);
+    }
+  }
+
+  private showPolyline(polyline: any) {
+    if (!polyline.visible) {
+      polyline.addTo(this.map);
+      polyline.visible = true;
+    }
+
+    this.visibleCount++;
+  }
+
+  private hidePolyline(polyline: any) {
+    if (polyline.visible) {
+      polyline.remove(this.map);
+      polyline.visible = false;
     }
   }
 
@@ -86,7 +108,7 @@ export class AppComponent implements OnInit {
 
     this.createPolylines(this.activities);
     this.sortPolylines();
-    this.sliderChanged();
+    this.filterChanged();
   }
 
   private createPolylines(activityStreams: any[]) {
@@ -101,7 +123,7 @@ export class AppComponent implements OnInit {
         stream.map.summary_polyline
       ).getLatLngs();
       const polyline = L.polyline(coordinates, {
-        color: stream.type === 'Run' ? this.runColor : this.rideColor,
+        color: this.isRun(stream) ? this.runColor : this.rideColor,
         weight: 2,
         opacity: 0.6
       });
@@ -113,6 +135,14 @@ export class AppComponent implements OnInit {
 
     this.endRange = this.polylines.length;
     this.rangePosition = this.polylines.length;
+  }
+
+  private isRun(activity: any) {
+    return activity.type === 'Run';
+  }
+
+  private isRide(activity: any) {
+    return !this.isRun(activity);
   }
 
   private sortPolylines() {
