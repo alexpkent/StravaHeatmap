@@ -1,6 +1,6 @@
 $highlight-color: #ffc107;
-$runs-color: #E63419;
-$rides-color: #2B54D4;
+$runs-color: #e63419;
+$rides-color: #2b54d4;
 
 .view {
   display: flex;
@@ -24,7 +24,9 @@ $rides-color: #2B54D4;
   padding: 0 15px;
 }
 
-.controls {}
+.controls {
+  margin-bottom: 5px;
+}
 
 .slider {
   -webkit-appearance: none;
@@ -34,8 +36,8 @@ $rides-color: #2B54D4;
   background: #d3d3d3;
   outline: none;
   opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
 }
 
 .slider::-webkit-slider-thumb {
@@ -58,7 +60,7 @@ $rides-color: #2B54D4;
 
 .legend {
   display: inline-block;
-  padding: 0 .4em;
+  padding: 0 0.4em;
   font-size: 75%;
   text-align: center;
   vertical-align: top;
@@ -70,17 +72,17 @@ $rides-color: #2B54D4;
   display: inline-block;
 }
 
-.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-inner {
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
   margin-left: 0;
 }
 
-.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch {
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
   right: 0;
 }
 
 .onoffswitch {
   position: relative;
-  width: 65px;
+  width: 75px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -151,7 +153,7 @@ $rides-color: #2B54D4;
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 46px;
+  right: 56px;
   -moz-transition: all 0.3s ease-in 0s;
   -webkit-transition: all 0.3s ease-in 0s;
   -o-transition: all 0.3s ease-in 0s;
@@ -159,6 +161,8 @@ $rides-color: #2B54D4;
 }
 
 .switch.runs {
+  margin-left: 10px;
+
   .onoffswitch-inner:before {
     content: 'RUNS';
     background-color: $runs-color;
@@ -179,7 +183,6 @@ $rides-color: #2B54D4;
 
 .switch.rides {
   margin-left: 10px;
-  margin-right: 25px;
 
   .onoffswitch-inner:before {
     content: 'RIDES';
@@ -196,5 +199,15 @@ $rides-color: #2B54D4;
 
   .onoffswitch-inner:after {
     content: 'RIDES';
+  }
+}
+
+.switch.overlay {
+  .onoffswitch-inner:before {
+    content: 'OVERLAY';
+  }
+
+  .onoffswitch-inner:after {
+    content: 'OVERLAY';
   }
 }

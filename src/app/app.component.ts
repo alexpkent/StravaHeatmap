@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
   rideCount = 0;
   totalDistance = 0;
   totalSeconds = 0;
+  countDistance = 0;
   authenticating = false;
   loading = false;
   loaded = false;
@@ -26,7 +27,9 @@ export class AppComponent implements OnInit {
   runColor = '#E63419';
   showRuns = true;
   showRides = true;
+  overlay = true;
   visibleCount = 0;
+  lastVisibleActivity: any;
 
   constructor(private stravaService: StravaService) {}
 
@@ -51,6 +54,7 @@ export class AppComponent implements OnInit {
 
   filterChanged() {
     this.visibleCount = 0;
+    this.countDistance = 0;
 
     for (let i = 0; i < this.polylines.length; i++) {
       const polyline = this.polylines[i];
@@ -63,9 +67,10 @@ export class AppComponent implements OnInit {
       (this.isRun(polyline.activity) && this.showRuns) ||
       (this.isRide(polyline.activity) && this.showRides);
 
-    const showRange = index + 1 <= this.rangePosition;
+    const showRange = index + 1 <= this.rangePosition && this.overlay;
+    const showSingle = index + 1 === this.rangePosition && !this.overlay;
 
-    if (showActivityType && showRange) {
+    if ((showActivityType && showRange) || (showActivityType && showSingle)) {
       this.showPolyline(polyline);
     } else {
       this.hidePolyline(polyline);
@@ -79,6 +84,8 @@ export class AppComponent implements OnInit {
     }
 
     this.visibleCount++;
+    this.countDistance += polyline.activity.distance;
+    this.lastVisibleActivity = polyline.activity;
   }
 
   private hidePolyline(polyline: any) {

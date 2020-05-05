@@ -1,5 +1,5 @@
 <div class="view">
-  <nav class="navbar navbar-dark bg-dark">
+  <nav class="navbar navbar-dark bg-dark pb-0">
     <span class="navbar-brand mb-0 h1 text-warning">
       Alex's Strava Heat Map
     </span>
@@ -13,7 +13,7 @@
       Loading...
     </span>
 
-    <span class="navbar-text"
+    <span class="navbar-text small"
           *ngIf="loaded">
       {{distanceToMiles(totalDistance) | number:'1.0-0'}} Miles<span class="text-warning"> | </span>
       {{secondsToHours(totalSeconds)| number:'1.0-0'}} Hours<span class="text-warning"> | </span>
@@ -33,6 +33,67 @@
 
   <div class="controls"
        *ngIf="loaded">
+
+    <div class="navbar pb-0 pt-0">
+      <span class="small text-warning">Showing {{visibleCount}} of {{endRange}} |
+        {{distanceToMiles(countDistance) | number:'1.0-0'}} Miles | <a
+           href="https://www.strava.com/activities/{{lastVisibleActivity.id}}"
+           target="_blank">{{lastVisibleActivity.name}}</a>
+
+      </span>
+
+      <span class="navbar-text pb-0">
+        <div class="switch overlay">
+          <div class="onoffswitch">
+            <input type="checkbox"
+                   name="collapsemenu"
+                   class="onoffswitch-checkbox"
+                   id="singleCheck"
+                   [(ngModel)]="overlay"
+                   (ngModelChange)="filterChanged()">
+            <label class="onoffswitch-label"
+                   for="singleCheck">
+              <span class="onoffswitch-inner"></span>
+              <span class="onoffswitch-switch"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="switch runs">
+          <div class="onoffswitch">
+            <input type="checkbox"
+                   name="collapsemenu"
+                   class="onoffswitch-checkbox"
+                   id="runsCheck"
+                   [(ngModel)]="showRuns"
+                   (ngModelChange)="filterChanged()">
+            <label class="onoffswitch-label"
+                   for="runsCheck">
+              <span class="onoffswitch-inner"></span>
+              <span class="onoffswitch-switch"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="switch rides">
+          <div class="onoffswitch">
+            <input type="checkbox"
+                   name="collapsemenu"
+                   class="onoffswitch-checkbox"
+                   id="ridesCheck"
+                   [(ngModel)]="showRides"
+                   (ngModelChange)="filterChanged()">
+            <label class="onoffswitch-label"
+                   for="ridesCheck">
+              <span class="onoffswitch-inner"></span>
+              <span class="onoffswitch-switch"></span>
+            </label>
+          </div>
+        </div>
+
+      </span>
+
+    </div>
     <div class="slider-container">
       <input type="range"
              min="1"
@@ -41,46 +102,6 @@
              (ngModelChange)="filterChanged()"
              class="slider"
              id="dateSlider">
-
-      <span class="d-flex justify-content-between">
-        <span class="small d-flex justify-content-center text-warning">Showing {{visibleCount}} of {{endRange}}</span>
-
-        <span>
-          <div class="switch runs">
-            <div class="onoffswitch">
-              <input type="checkbox"
-                     name="collapsemenu"
-                     class="onoffswitch-checkbox"
-                     id="runsCheck"
-                     [(ngModel)]="showRuns"
-                     (ngModelChange)="filterChanged()">
-              <label class="onoffswitch-label"
-                     for="runsCheck">
-                <span class="onoffswitch-inner"></span>
-                <span class="onoffswitch-switch"></span>
-              </label>
-            </div>
-          </div>
-
-          <div class="switch rides">
-            <div class="onoffswitch">
-              <input type="checkbox"
-                     name="collapsemenu"
-                     class="onoffswitch-checkbox"
-                     id="ridesCheck"
-                     [(ngModel)]="showRides"
-                     (ngModelChange)="filterChanged()">
-              <label class="onoffswitch-label"
-                     for="ridesCheck">
-                <span class="onoffswitch-inner"></span>
-                <span class="onoffswitch-switch"></span>
-              </label>
-            </div>
-          </div>
-        </span>
-      </span>
-
-
     </div>
   </div>
 

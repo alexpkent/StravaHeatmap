@@ -39,3 +39,9 @@ token_type: "Bearer"
 ## Deployment
 
 - Upload dist folder contents from `ng build --prod` to the `$web` container created for the static web hosting
+
+## Implementation
+
+On each load the token file will be downloaded from the container blob, if the token is valid it will be used, if not a refresh will be requested from Strava. Then the new token, refresh token and expiration is uploaded to the blob.
+
+That token is then used to request the activities from Strava for the associated user.
