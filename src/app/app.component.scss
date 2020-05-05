@@ -2,18 +2,12 @@ $highlight-color: #ffc107;
 $runs-color: #e63419;
 $rides-color: #2b54d4;
 
-.view {
-  display: flex;
-  flex-flow: column;
-  height: 100%;
-}
-
 .summary {
   white-space: nowrap;
 }
 
 .map-container {
-  flex: 1 1 auto;
+  height: calc(100vh - 104px);
 }
 
 .map-frame {
