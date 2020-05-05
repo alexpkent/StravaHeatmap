@@ -13,10 +13,12 @@
       Loading...
     </span>
 
-    <span class="navbar-text small"
+    <span class="navbar-text small summary"
           *ngIf="loaded">
-      {{distanceToMiles(totalDistance) | number:'1.0-0'}} Miles<span class="text-warning"> | </span>
-      {{secondsToHours(totalSeconds)| number:'1.0-0'}} Hours<span class="text-warning"> | </span>
+      <a href="https://www.strava.com/activities/{{lastVisibleActivity.id}}"
+         target="_blank">{{lastVisibleActivity.name}}</a><span class="text-warning"> | </span>
+      {{distanceToMiles(totalDistance) | number:'1.0-1'}} Miles<span class="text-warning"> | </span>
+      {{secondsToHours(totalSeconds)| number:'1.0-1'}} Hours<span class="text-warning"> | </span>
       {{runCount}} Runs<span class="text-warning"></span><span class="text-warning"> | </span>
       {{rideCount}} Rides<span class="text-warning"></span>
     </span>
@@ -34,15 +36,8 @@
   <div class="controls"
        *ngIf="loaded">
 
-    <div class="navbar pb-0 pt-0">
-      <span class="small text-warning">Showing {{visibleCount}} of {{endRange}} |
-        {{distanceToMiles(countDistance) | number:'1.0-0'}} Miles | <a
-           href="https://www.strava.com/activities/{{lastVisibleActivity.id}}"
-           target="_blank">{{lastVisibleActivity.name}}</a>
-
-      </span>
-
-      <span class="navbar-text pb-0">
+    <div class="d-flex pb-0 pt-0">
+      <span class="ml-auto pb-0">
         <div class="switch overlay">
           <div class="onoffswitch">
             <input type="checkbox"

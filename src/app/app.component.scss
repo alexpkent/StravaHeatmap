@@ -8,6 +8,10 @@ $rides-color: #2b54d4;
   height: 100%;
 }
 
+.summary {
+  white-space: nowrap;
+}
+
 .map-container {
   flex: 1 1 auto;
 }
@@ -72,11 +76,11 @@ $rides-color: #2b54d4;
   display: inline-block;
 }
 
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-inner {
   margin-left: 0;
 }
 
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch {
   right: 0;
 }
 
@@ -183,6 +187,7 @@ $rides-color: #2b54d4;
 
 .switch.rides {
   margin-left: 10px;
+  margin-right: 15px;
 
   .onoffswitch-inner:before {
     content: 'RIDES';

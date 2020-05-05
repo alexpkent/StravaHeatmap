@@ -15,7 +15,6 @@ export class AppComponent implements OnInit {
   rideCount = 0;
   totalDistance = 0;
   totalSeconds = 0;
-  countDistance = 0;
   authenticating = false;
   loading = false;
   loaded = false;
@@ -54,7 +53,11 @@ export class AppComponent implements OnInit {
 
   filterChanged() {
     this.visibleCount = 0;
-    this.countDistance = 0;
+    this.totalDistance = 0;
+    this.totalSeconds = 0;
+    this.lastVisibleActivity = null;
+    this.runCount = 0;
+    this.rideCount = 0;
 
     for (let i = 0; i < this.polylines.length; i++) {
       const polyline = this.polylines[i];
@@ -84,8 +87,17 @@ export class AppComponent implements OnInit {
     }
 
     this.visibleCount++;
-    this.countDistance += polyline.activity.distance;
+    this.totalDistance += polyline.activity.distance;
+    this.totalSeconds += polyline.activity.elapsed_time;
     this.lastVisibleActivity = polyline.activity;
+
+    if (polyline.activity.type === 'Run') {
+      this.runCount += 1;
+    }
+
+    if (polyline.activity.type === 'Ride') {
+      this.rideCount += 1;
+    }
   }
 
   private hidePolyline(polyline: any) {
@@ -120,8 +132,6 @@ export class AppComponent implements OnInit {
 
   private createPolylines(activityStreams: any[]) {
     activityStreams.forEach((stream) => {
-      this.processActivity(stream);
-
       if (!stream.map.summary_polyline) {
         return;
       }
@@ -159,18 +169,6 @@ export class AppComponent implements OnInit {
 
       return dateA < dateB ? -1 : dateA > dateB ? 1 : 0;
     });
-  }
-
-  private processActivity(activity) {
-    this.totalDistance += activity.distance;
-    this.totalSeconds += activity.elapsed_time;
-
-    if (activity.type === 'Run') {
-      this.runCount += 1;
-    }
-    if (activity.type === 'Ride') {
-      this.rideCount += 1;
-    }
   }
 
   distanceToMiles(meters: number) {
