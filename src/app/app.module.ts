@@ -4,7 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { registerLocaleData } from '@angular/common';
 import { LOCALE_ID } from '@angular/core';
 import localeEnGb from '@angular/common/locales/en-GB';
@@ -21,7 +21,7 @@ registerLocaleData(localeEnGb, 'en-GB');
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [DatePipe, { provide: LOCALE_ID, useValue: 'en-GB' }],
+  providers: [DatePipe, { provide: LOCALE_ID, useValue: 'en-GB' }, DecimalPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

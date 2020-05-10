@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DecimalPipe, DatePipe } from '@angular/common';
 import { StravaService } from './strava.service';
 
 declare var L: any;
@@ -30,7 +31,11 @@ export class AppComponent implements OnInit {
   visibleCount = 0;
   lastVisibleActivity: any;
 
-  constructor(private stravaService: StravaService) {}
+  constructor(
+    private stravaService: StravaService,
+    private decimalPipe: DecimalPipe,
+    private datePipe: DatePipe
+  ) {}
 
   ngOnInit(): void {
     this.load();
@@ -88,7 +93,7 @@ export class AppComponent implements OnInit {
 
     this.visibleCount++;
     this.totalDistance += polyline.activity.distance;
-    this.totalSeconds += polyline.activity.elapsed_time;
+    this.totalSeconds += polyline.activity.moving_time;
     this.lastVisibleActivity = polyline.activity;
 
     if (polyline.activity.type === 'Run') {
@@ -146,6 +151,7 @@ export class AppComponent implements OnInit {
       });
       polyline.visible = false;
       polyline.activity = stream;
+      polyline.bindPopup(this.createPolylinePopup(stream));
 
       this.polylines.push(polyline);
     });
@@ -160,6 +166,18 @@ export class AppComponent implements OnInit {
 
   private isRide(activity: any) {
     return !this.isRun(activity);
+  }
+
+  private createPolylinePopup(activity: any) {
+    return (
+      `<b><a href="https://www.strava.com/activities/${activity.id}" target="_blank">${activity.name}</a></b> | ` +
+      `${this.datePipe.transform(activity.start_date, 'shortDate')}<br>` +
+      `Distance: ${this.decimalPipe.transform(
+        this.distanceToMiles(activity.distance),
+        '1.0-1'
+      )} Miles<br>` +
+      `Time: ${this.getDuration(activity.moving_time)}`
+    );
   }
 
   private sortPolylines() {
@@ -177,5 +195,24 @@ export class AppComponent implements OnInit {
 
   secondsToHours(time: number) {
     return time / 60 / 60;
+  }
+
+  private getDuration(durationInSeconds: number) {
+    const hours = Math.floor(durationInSeconds / 60 / 60);
+    const minutes = Math.floor(durationInSeconds / 60) - hours * 60;
+    const seconds = durationInSeconds % 60;
+
+    let formatted = '';
+
+    if (hours > 0) {
+      formatted += hours.toString() + ':';
+    }
+
+    formatted +=
+      minutes.toString().padStart(2, '0') +
+      ':' +
+      seconds.toString().padStart(2, '0');
+
+    return formatted;
   }
 }
