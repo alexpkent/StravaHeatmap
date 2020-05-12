@@ -2,7 +2,16 @@
   <nav class="navbar navbar-dark bg-dark pb-0">
     <span class="navbar-brand mb-0 h1 text-warning">
       Alex's Strava Heat Map
+      <span *ngIf="loaded"
+            class="navbar-text home">
+        | <a (click)="goHome()"
+           [routerLink]="">Home</a>
+        |
+        <a href="https://www.strava.com/activities/{{lastVisibleActivity.id}}"
+           target="_blank">Most Recent</a>
+      </span>
     </span>
+
     <span class="navbar-text"
           *ngIf="authenticating">
       Authenticating...
@@ -13,12 +22,10 @@
       Loading...
     </span>
 
-    <span class="navbar-text small summary"
+    <span class="navbar-text small summary ml-auto"
           *ngIf="loaded">
-      <a href="https://www.strava.com/activities/{{lastVisibleActivity.id}}"
-         target="_blank">{{lastVisibleActivity.name}}</a><span class="text-warning"> | </span>
       {{distanceToMiles(totalDistance) | number:'1.0-1'}} Miles<span class="text-warning"> | </span>
-      {{secondsToHours(totalSeconds)| number:'1.0-1'}} Hours<span class="text-warning"> | </span>
+      {{secondsToHours(totalSeconds) | number:'1.0-1'}} Hours<span class="text-warning"> | </span>
       {{runCount}} Runs<span class="text-warning"></span><span class="text-warning"> | </span>
       {{rideCount}} Rides<span class="text-warning"></span>
     </span>
@@ -38,6 +45,23 @@
 
     <div class="d-flex pb-0 pt-0">
       <span class="ml-auto pb-0">
+
+        <div class="switch map">
+          <div class="onoffswitch">
+            <input type="checkbox"
+                   name="collapsemenu"
+                   class="onoffswitch-checkbox"
+                   id="mapCheck"
+                   [(ngModel)]="showMap"
+                   (ngModelChange)="showMapChanged()">
+            <label class="onoffswitch-label"
+                   for="mapCheck">
+              <span class="onoffswitch-inner"></span>
+              <span class="onoffswitch-switch"></span>
+            </label>
+          </div>
+        </div>
+
         <div class="switch overlay">
           <div class="onoffswitch">
             <input type="checkbox"
@@ -100,7 +124,8 @@
     </div>
   </div>
 
-  <div class="map-container">
+  <div class="map-container"
+       [ngClass]="{'hide-map' : !showMap}">
     <div class="map-frame">
       <div id="map"></div>
     </div>

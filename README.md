@@ -2,9 +2,15 @@
 
 Similar to the paid version from Strava this will overlay all Strava map activity on a [Leaflet](https://leafletjs.com/) map with summary data and activity selection controls.
 
+Routes are darker colours the more they have been run/ridden.
+
 An angular SPA hosted/backed by an Azure Storage Account.
 
 ![site image](screenshots/site.png)
+
+With a number of filters and options such as viewing activities by time, by type, overlayed, with popups and with/without the map.
+
+![site image](screenshots/site_no_map.png)
 
 ## Azure Setup
 

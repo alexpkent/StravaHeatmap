@@ -11,6 +11,7 @@ declare var L: any;
 })
 export class AppComponent implements OnInit {
   private mapCenter = [50.883269, -0.135436];
+  private mapDefaultZoom = 11;
   activities: any;
   runCount = 0;
   rideCount = 0;
@@ -22,12 +23,14 @@ export class AppComponent implements OnInit {
   endRange = 0;
   rangePosition = 0;
   map: any;
+  mapBackground: any;
   polylines = [];
   rideColor = '#2B54D4';
   runColor = '#E63419';
   showRuns = true;
   showRides = true;
   overlay = true;
+  showMap = true;
   visibleCount = 0;
   lastVisibleActivity: any;
 
@@ -49,11 +52,10 @@ export class AppComponent implements OnInit {
     this.loading = true;
 
     this.activities = await this.stravaService.getActivities();
+    this.loadHeatmap();
 
     this.loading = false;
     this.loaded = true;
-
-    this.loadHeatmap();
   }
 
   filterChanged() {
@@ -68,6 +70,18 @@ export class AppComponent implements OnInit {
       const polyline = this.polylines[i];
       this.setPolylineVisibility(polyline, i);
     }
+  }
+
+  showMapChanged() {
+    if (this.showMap) {
+      this.mapBackground.addTo(this.map);
+    } else {
+      this.mapBackground.remove(this.map);
+    }
+  }
+
+  goHome() {
+    this.map.setView(this.mapCenter, this.mapDefaultZoom);
   }
 
   private setPolylineVisibility(polyline: any, index: number) {
@@ -115,10 +129,10 @@ export class AppComponent implements OnInit {
   private async loadHeatmap() {
     this.map = L.map('map', {
       center: this.mapCenter,
-      zoom: 11
+      zoom: this.mapDefaultZoom
     });
 
-    const tiles = L.tileLayer(
+    this.mapBackground = L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
         maxZoom: 19,
@@ -128,7 +142,7 @@ export class AppComponent implements OnInit {
       }
     );
 
-    tiles.addTo(this.map);
+    this.mapBackground.addTo(this.map);
 
     this.createPolylines(this.activities);
     this.sortPolylines();
@@ -146,7 +160,7 @@ export class AppComponent implements OnInit {
       ).getLatLngs();
       const polyline = L.polyline(coordinates, {
         color: this.isRun(stream) ? this.runColor : this.rideColor,
-        weight: 2,
+        weight: 3,
         opacity: 0.6
       });
       polyline.visible = false;
@@ -198,21 +212,25 @@ export class AppComponent implements OnInit {
   }
 
   private getDuration(durationInSeconds: number) {
-    const hours = Math.floor(durationInSeconds / 60 / 60);
-    const minutes = Math.floor(durationInSeconds / 60) - hours * 60;
-    const seconds = durationInSeconds % 60;
+    try {
+      const hours = Math.floor(durationInSeconds / 60 / 60);
+      const minutes = Math.floor(durationInSeconds / 60) - hours * 60;
+      const seconds = durationInSeconds % 60;
 
-    let formatted = '';
+      let formatted = '';
 
-    if (hours > 0) {
-      formatted += hours.toString() + ':';
+      if (hours > 0) {
+        formatted += hours.toString() + ':';
+      }
+
+      formatted +=
+        minutes.toString().padStart(2, '0') +
+        ':' +
+        seconds.toString().padStart(2, '0');
+
+      return formatted;
+    } catch (error) {
+      return '';
     }
-
-    formatted +=
-      minutes.toString().padStart(2, '0') +
-      ':' +
-      seconds.toString().padStart(2, '0');
-
-    return formatted;
   }
 }

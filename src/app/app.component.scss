@@ -1,13 +1,25 @@
 $highlight-color: #ffc107;
 $runs-color: #e63419;
 $rides-color: #2b54d4;
+$mapSwitch-color: #ff0783;
 
 .summary {
   white-space: nowrap;
 }
 
+.navbar-text.home {
+  font-size: 65%;
+  padding: 0px;
+}
+
 .map-container {
   height: calc(100vh - 104px);
+}
+
+.map-container.hide-map {
+  .leaflet-container {
+    background: none;
+  }
 }
 
 .map-frame {
@@ -202,11 +214,32 @@ $rides-color: #2b54d4;
 }
 
 .switch.overlay {
+  margin-left: 10px;
+
   .onoffswitch-inner:before {
     content: 'OVERLAY';
   }
 
   .onoffswitch-inner:after {
     content: 'OVERLAY';
+  }
+}
+
+.switch.map {
+  .onoffswitch-inner:before {
+    content: 'MAP';
+    background-color: $mapSwitch-color;
+  }
+
+  .onoffswitch-label {
+    border: 2px solid $mapSwitch-color;
+  }
+
+  .onoffswitch-switch {
+    border: 2px solid $mapSwitch-color;
+  }
+
+  .onoffswitch-inner:after {
+    content: 'MAP';
   }
 }
