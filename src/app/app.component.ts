@@ -72,6 +72,16 @@ export class AppComponent implements OnInit {
     }
   }
 
+  backOneActivity() {
+    this.rangePosition--;
+    this.filterChanged();
+  }
+
+  forwardOneActivity() {
+    this.rangePosition++;
+    this.filterChanged();
+  }
+
   showMapChanged() {
     if (this.showMap) {
       this.mapBackground.addTo(this.map);

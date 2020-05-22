@@ -1,28 +1,20 @@
 <div>
-  <nav class="navbar navbar-dark bg-dark pb-0">
-    <span class="navbar-brand mb-0 h1 text-warning">
+  <nav *ngIf="loaded"
+       class="navbar navbar-dark bg-dark pb-0">
+    <span class="navbar-brand mb-0 mr-1 h1 text-warning">
       Alex's Strava Heat Map
-      <span *ngIf="loaded"
-            class="navbar-text home">
-        | <a (click)="goHome()"
-           [routerLink]="">Home</a>
-        |
-        <a href="https://www.strava.com/activities/{{lastVisibleActivity.id}}"
-           target="_blank">Most Recent</a>
-      </span>
+
     </span>
 
-    <span class="navbar-text"
-          *ngIf="authenticating">
-      Authenticating...
+    <span class="navbar-text home mr-auto mt-1">
+      | <a (click)="goHome()"
+         [routerLink]="">Home</a>
+      |
+      <a href="https://www.strava.com/activities/{{lastVisibleActivity.id}}"
+         target="_blank">Last Activity: {{lastVisibleActivity.start_date | timeSince}}</a>
     </span>
 
-    <span class="navbar-text"
-          *ngIf="loading">
-      Loading...
-    </span>
-
-    <span class="navbar-text small summary ml-auto"
+    <span class="navbar-text small summary pt-0"
           *ngIf="loaded">
       {{distanceToMiles(totalDistance) | number:'1.0-1'}} Miles<span class="text-warning"> | </span>
       {{secondsToHours(totalSeconds) | number:'1.0-1'}} Hours<span class="text-warning"> | </span>
@@ -40,11 +32,17 @@
     </div>
   </div>
 
+  <div class="d-flex justify-content-center mt-5 text-warning"
+       *ngIf="authenticating || loading">
+    <h2 *ngIf="authenticating">Authenticating...</h2>
+    <h2 *ngIf="loading">Loading...</h2>
+  </div>
+
   <div class="controls"
        *ngIf="loaded">
 
     <div class="d-flex pb-0 pt-0">
-      <span class="ml-auto pb-0">
+      <span class="ml-3 pb-0">
 
         <div class="switch map">
           <div class="onoffswitch">
@@ -113,14 +111,24 @@
       </span>
 
     </div>
-    <div class="slider-container">
+    <div class="slider-container d-flex justify-content-between">
+      <button type="button"
+              class="btn btn-warning btn-last"
+              (click)="backOneActivity()"
+              [disabled]="rangePosition == 1">&laquo;</button>
+
       <input type="range"
              min="1"
              [attr.max]="endRange"
              [(ngModel)]="rangePosition"
              (ngModelChange)="filterChanged()"
-             class="slider"
+             class="slider w-100"
              id="dateSlider">
+
+      <button type="button"
+              class="btn btn-warning btn-next"
+              (click)="forwardOneActivity()"
+              [disabled]="rangePosition == endRange">&raquo;</button>
     </div>
   </div>
 

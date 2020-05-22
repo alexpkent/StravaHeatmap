@@ -9,10 +9,10 @@ import { IStravaTokenInfo } from './IStravaTokenInfo';
 export class StravaService {
   private authToken: string;
 
-  private stravaClientId = '';
-  private stravaClientSecret = '';
+  private stravaClientId = 'CLIENT_ID';
+  private stravaClientSecret = 'CLIENT_SECRET';
   // tslint:disable-next-line:max-line-length
-  private azureBlobConnectionString = '';
+  private azureBlobConnectionString = 'BLOB_CONNECTION';
   private azureContainerName = 'strava';
   private azureBlobName = 'strava.json';
 

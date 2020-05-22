@@ -31,7 +31,7 @@ $mapSwitch-color: #ff0783;
 }
 
 .slider-container {
-  padding: 0 15px;
+  padding: 4px 15px;
 }
 
 .controls {
@@ -40,7 +40,7 @@ $mapSwitch-color: #ff0783;
 
 .slider {
   -webkit-appearance: none;
-  width: 100%;
+  width: 96%;
   height: 15px;
   border-radius: 5px;
   background: #d3d3d3;
@@ -66,6 +66,18 @@ $mapSwitch-color: #ff0783;
   border-radius: 50%;
   background: $highlight-color;
   cursor: pointer;
+}
+
+.btn-last {
+  line-height: 0.2rem;
+  padding: 5px 10px;
+  margin-right: 5px;
+}
+
+.btn-next {
+  line-height: 0.2rem;
+  padding: 5px 10px;
+  margin-left: 5px;
 }
 
 .legend {
