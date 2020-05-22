@@ -17,10 +17,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Update Blob Connection String
-      uses: BjornLuG/substitute-string-action@v1
+      uses: jacobtomlinson/gha-find-replace@0.1.1
       with:
-        _input-file: 'src/app/strava.service.ts'
-        BLOB_CONNECTION: ${{ secrets.BLOB_CONNECTION }}
+        find: "BLOB_CONNECTION"
+        replace: ${{ secrets.BLOB_CONNECTION }}
+        include: 'strava.service.ts'  
     - name: Build And Deploy
       id: builddeploy
       uses: Azure/static-web-apps-deploy@v0.0.1-preview
