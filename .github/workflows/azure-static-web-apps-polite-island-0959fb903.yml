@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Update Blob Connection String
-      uses: datamonsters/replace-action
+      uses: datamonsters/replace-action@v2
       with:
         files: 'strava.service.ts'
         replacements: 'BLOB_CONNECTION=${{ secrets.BLOB_CONNECTION }}'
