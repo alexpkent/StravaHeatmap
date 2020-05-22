@@ -19,7 +19,7 @@ jobs:
     - name: Update Blob Connection String
       uses: datamonsters/replace-action@v2
       with:
-        files: 'strava.service.ts'
+        files: 'src/app/strava.service.ts'
         replacements: 'BLOB_CONNECTION=${{ secrets.BLOB_CONNECTION }}'
     - name: Build And Deploy
       id: builddeploy
