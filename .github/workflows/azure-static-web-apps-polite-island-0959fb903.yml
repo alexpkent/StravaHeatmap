@@ -17,10 +17,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Update Blob Connection String
-      uses: datamonsters/replace-action@v2
+      uses: BjornLuG/substitute-string-action@v1
       with:
-        files: 'src/app/strava.service.ts'
-        replacements: 'BLOB_CONNECTION="${{ secrets.BLOB_CONNECTION }}"'
+        _input-file: 'src/app/strava.service.ts'
+        BLOB_CONNECTION: ${{ secrets.BLOB_CONNECTION }}
     - name: Build And Deploy
       id: builddeploy
       uses: Azure/static-web-apps-deploy@v0.0.1-preview
