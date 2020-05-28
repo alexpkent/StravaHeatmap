@@ -171,15 +171,21 @@ export class AppComponent implements OnInit {
   }
 
   private configureLocation() {
+    console.log('Requesting current location');
     this.map.locate({ setView: true, maxZoom: this.mapDefaultZoom });
 
     this.map.on('locationfound', (e) => {
+      console.log('locationfound', e);
       const radius = e.accuracy;
       this.currentLocation = e.latlng;
 
       L.marker(e.latlng)
         .addTo(this.map)
         .bindPopup(`You are within ${radius} meters from this point`);
+    });
+
+    this.map.on('locationerror', (e) => {
+      console.log('locationerror', e);
     });
   }
 
