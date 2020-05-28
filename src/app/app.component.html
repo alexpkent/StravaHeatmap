@@ -9,8 +9,9 @@
     <span class="navbar-text home mr-auto mt-1">
       | <a (click)="goHome()"
          [routerLink]="">Home</a>
-      |
-      <a href="https://www.strava.com/activities/{{lastVisibleActivity.id}}"
+      | <a (click)="goCurrentLocation()"
+         [routerLink]="">Me</a>
+      | <a href="https://www.strava.com/activities/{{lastVisibleActivity.id}}"
          target="_blank">Last Activity: {{lastVisibleActivity.start_date | timeSince}}</a>
     </span>
 
