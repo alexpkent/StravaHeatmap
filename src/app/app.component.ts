@@ -172,7 +172,7 @@ export class AppComponent implements OnInit {
 
   private configureLocation() {
     console.log('Requesting current location');
-    this.map.locate({ setView: true, maxZoom: this.mapDefaultZoom });
+    this.map.locate({ setView: false, maxZoom: this.mapDefaultZoom });
 
     this.map.on('locationfound', (e) => {
       console.log('locationfound', e);
@@ -214,11 +214,11 @@ export class AppComponent implements OnInit {
     this.rangePosition = this.polylines.length;
   }
 
-  private isRun(activity: any) {
+  isRun(activity: any) {
     return activity.type === 'Run';
   }
 
-  private isRide(activity: any) {
+  isRide(activity: any) {
     return !this.isRun(activity);
   }
 

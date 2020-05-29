@@ -7,12 +7,17 @@
     </span>
 
     <span class="navbar-text home mr-auto mt-1">
-      | <a (click)="goHome()"
-         [routerLink]="">Home</a>
+      <a (click)="goHome()"
+         [routerLink]=""><i class="fas fa-home fa-lg ml-1 mr-1"></i></a>
       | <a (click)="goCurrentLocation()"
-         [routerLink]="">Me</a>
+         [routerLink]=""><i class="fas fa-map-marker-alt fa-lg ml-1 mr-1"></i></a>
       | <a href="https://www.strava.com/activities/{{lastVisibleActivity.id}}"
-         target="_blank">Last Activity: {{lastVisibleActivity.start_date | timeSince}}</a>
+         target="_blank">
+        <i class="fas fa-running fa-lg ml-1 mr-1"
+           *ngIf="isRun(lastVisibleActivity)"></i>
+        <i class="fas fa-biking fa-lg ml-1 mr-1"
+           *ngIf="isRide(lastVisibleActivity)"></i>
+        {{lastVisibleActivity.start_date | timeSince}}</a>
     </span>
 
     <span class="navbar-text small summary pt-0"
