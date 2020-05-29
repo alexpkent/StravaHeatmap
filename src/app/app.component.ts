@@ -12,6 +12,7 @@ declare var L: any;
 export class AppComponent implements OnInit {
   private mapCenter = [50.883269, -0.135436];
   private mapDefaultZoom = 11;
+  private currentLocation;
   activities: any;
   runCount = 0;
   rideCount = 0;
@@ -94,6 +95,12 @@ export class AppComponent implements OnInit {
     this.map.setView(this.mapCenter, this.mapDefaultZoom);
   }
 
+  goCurrentLocation() {
+    if (this.currentLocation) {
+      this.map.setView(this.currentLocation);
+    }
+  }
+
   private setPolylineVisibility(polyline: any, index: number) {
     const showActivityType =
       (this.isRun(polyline.activity) && this.showRuns) ||
@@ -137,6 +144,14 @@ export class AppComponent implements OnInit {
   }
 
   private async loadHeatmap() {
+    this.createMap();
+    this.createPolylines(this.activities);
+    this.sortPolylines();
+    this.filterChanged();
+    this.configureLocation();
+  }
+
+  private createMap() {
     this.map = L.map('map', {
       center: this.mapCenter,
       zoom: this.mapDefaultZoom
@@ -153,10 +168,25 @@ export class AppComponent implements OnInit {
     );
 
     this.mapBackground.addTo(this.map);
+  }
 
-    this.createPolylines(this.activities);
-    this.sortPolylines();
-    this.filterChanged();
+  private configureLocation() {
+    console.log('Requesting current location');
+    this.map.locate({ setView: false, maxZoom: this.mapDefaultZoom });
+
+    this.map.on('locationfound', (e) => {
+      console.log('locationfound', e);
+      const radius = e.accuracy;
+      this.currentLocation = e.latlng;
+
+      L.marker(e.latlng)
+        .addTo(this.map)
+        .bindPopup(`You are within ${radius} meters from this point`);
+    });
+
+    this.map.on('locationerror', (e) => {
+      console.log('locationerror', e);
+    });
   }
 
   private createPolylines(activityStreams: any[]) {
@@ -184,11 +214,11 @@ export class AppComponent implements OnInit {
     this.rangePosition = this.polylines.length;
   }
 
-  private isRun(activity: any) {
+  isRun(activity: any) {
     return activity.type === 'Run';
   }
 
-  private isRide(activity: any) {
+  isRide(activity: any) {
     return !this.isRun(activity);
   }
 
