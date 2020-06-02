@@ -24,8 +24,9 @@ export class AppComponent implements OnInit {
   endRange = 0;
   rangePosition = 0;
   map: any;
-  mapBackground: any;
   polylines = [];
+  runPolylines = [];
+  ridePolylines = [];
   rideColor = '#2B54D4';
   runColor = '#E63419';
   showRuns = true;
@@ -83,14 +84,6 @@ export class AppComponent implements OnInit {
     this.filterChanged();
   }
 
-  showMapChanged() {
-    if (this.showMap) {
-      this.mapBackground.addTo(this.map);
-    } else {
-      this.mapBackground.remove(this.map);
-    }
-  }
-
   goHome() {
     this.map.setView(this.mapCenter, this.mapDefaultZoom);
   }
@@ -144,20 +137,16 @@ export class AppComponent implements OnInit {
   }
 
   private async loadHeatmap() {
-    this.createMap();
     this.createPolylines(this.activities);
     this.sortPolylines();
+    this.createMap();
+
     this.filterChanged();
     this.configureLocation();
   }
 
   private createMap() {
-    this.map = L.map('map', {
-      center: this.mapCenter,
-      zoom: this.mapDefaultZoom
-    });
-
-    this.mapBackground = L.tileLayer(
+    const normalMap = L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
         maxZoom: 19,
@@ -167,7 +156,59 @@ export class AppComponent implements OnInit {
       }
     );
 
-    this.mapBackground.addTo(this.map);
+    const darkMap = L.tileLayer(
+      'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+      {
+        maxZoom: 19,
+        attribution:
+          // tslint:disable-next-line:max-line-length
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+      }
+    );
+
+    const runs = L.layerGroup(
+      this.polylines.filter((p) => this.isRun(p.activity))
+    );
+    const rides = L.layerGroup(
+      this.polylines.filter((p) => this.isRide(p.activity))
+    );
+
+    this.map = L.map('map', {
+      center: this.mapCenter,
+      zoom: this.mapDefaultZoom,
+      layers: [normalMap, darkMap, runs, rides]
+    });
+
+    const baseMaps = {
+      Standard: normalMap,
+      Dark: darkMap
+    };
+
+    const overlays = {
+      Runs: runs,
+      Rides: rides
+    };
+
+    const groupedOverlays = {
+      Activities: {
+        Runs: runs,
+        Rides: rides
+      },
+      'Time Range': {
+        Last: this.polylines[this.polylines.length - 1]
+      }
+    };
+    const groupedOverlaysOptions = {
+      exclusiveGroups: ['Time Range'],
+      groupCheckboxes: false
+    };
+
+    const layerControl = L.control.groupedLayers(
+      baseMaps,
+      groupedOverlays,
+      groupedOverlaysOptions
+    );
+    this.map.addControl(layerControl);
   }
 
   private configureLocation() {
