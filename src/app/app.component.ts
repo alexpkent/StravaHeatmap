@@ -189,26 +189,7 @@ export class AppComponent implements OnInit {
       Rides: rides
     };
 
-    const groupedOverlays = {
-      Activities: {
-        Runs: runs,
-        Rides: rides
-      },
-      'Time Range': {
-        Last: this.polylines[this.polylines.length - 1]
-      }
-    };
-    const groupedOverlaysOptions = {
-      exclusiveGroups: ['Time Range'],
-      groupCheckboxes: false
-    };
-
-    const layerControl = L.control.groupedLayers(
-      baseMaps,
-      groupedOverlays,
-      groupedOverlaysOptions
-    );
-    this.map.addControl(layerControl);
+    L.control.layers(baseMaps, overlays).addTo(this.map);
   }
 
   private configureLocation() {
