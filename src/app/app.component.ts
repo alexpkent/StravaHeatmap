@@ -1,8 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { StravaService } from './strava.service';
-
+import * as moment from 'moment';
 declare var L: any;
+
+enum View {
+  Day = 1,
+  Week,
+  Month,
+  Year,
+  All
+}
 
 @Component({
   selector: 'app-root',
@@ -21,20 +29,17 @@ export class AppComponent implements OnInit {
   authenticating = false;
   loading = false;
   loaded = false;
-  endRange = 0;
-  rangePosition = 0;
   map: any;
   polylines = [];
   runPolylines = [];
   ridePolylines = [];
+  runsLayer: any;
+  ridesLayer: any;
   rideColor = '#2B54D4';
   runColor = '#E63419';
-  showRuns = true;
-  showRides = true;
-  overlay = true;
-  showMap = true;
-  visibleCount = 0;
   lastVisibleActivity: any;
+  view = View;
+  currentView = View.All;
 
   constructor(
     private stravaService: StravaService,
@@ -60,28 +65,59 @@ export class AppComponent implements OnInit {
     this.loaded = true;
   }
 
-  filterChanged() {
-    this.visibleCount = 0;
+  filterChanged(view: View) {
+    this.currentView = view;
     this.totalDistance = 0;
     this.totalSeconds = 0;
     this.lastVisibleActivity = null;
     this.runCount = 0;
     this.rideCount = 0;
 
-    for (let i = 0; i < this.polylines.length; i++) {
-      const polyline = this.polylines[i];
-      this.setPolylineVisibility(polyline, i);
-    }
-  }
+    const yesterday = moment().subtract(1, 'days');
+    const lastWeek = moment().subtract(1, 'weeks');
+    const lastMonth = moment().subtract(1, 'months');
+    const lastYear = moment().subtract(1, 'years');
 
-  backOneActivity() {
-    this.rangePosition--;
-    this.filterChanged();
-  }
+    this.polylines.forEach((polyline) => {
+      let show = false;
 
-  forwardOneActivity() {
-    this.rangePosition++;
-    this.filterChanged();
+      switch (this.currentView) {
+        case View.All: {
+          show = true;
+          break;
+        }
+        case View.Year: {
+          if (moment(polyline.activity.start_date).isAfter(lastYear)) {
+            show = true;
+          }
+          break;
+        }
+        case View.Month: {
+          if (moment(polyline.activity.start_date).isAfter(lastMonth)) {
+            show = true;
+          }
+          break;
+        }
+        case View.Week: {
+          if (moment(polyline.activity.start_date).isAfter(lastWeek)) {
+            show = true;
+          }
+          break;
+        }
+        case View.Day: {
+          if (moment(polyline.activity.start_date).isAfter(yesterday)) {
+            show = true;
+          }
+          break;
+        }
+      }
+
+      if (show) {
+        this.showPolyline(polyline);
+      } else {
+        this.hidePolyline(polyline);
+      }
+    });
   }
 
   goHome() {
@@ -94,45 +130,40 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private setPolylineVisibility(polyline: any, index: number) {
-    const showActivityType =
-      (this.isRun(polyline.activity) && this.showRuns) ||
-      (this.isRide(polyline.activity) && this.showRides);
-
-    const showRange = index + 1 <= this.rangePosition && this.overlay;
-    const showSingle = index + 1 === this.rangePosition && !this.overlay;
-
-    if ((showActivityType && showRange) || (showActivityType && showSingle)) {
-      this.showPolyline(polyline);
-    } else {
-      this.hidePolyline(polyline);
-    }
-  }
-
   private showPolyline(polyline: any) {
     if (!polyline.visible) {
-      polyline.addTo(this.map);
+      if (this.isRun(polyline.activity)) {
+        this.runsLayer.addLayer(polyline);
+      }
+      if (this.isRide(polyline.activity)) {
+        this.ridesLayer.addLayer(polyline);
+      }
+
       polyline.visible = true;
     }
 
-    this.visibleCount++;
     this.totalDistance += polyline.activity.distance;
     this.totalSeconds += polyline.activity.moving_time;
     this.lastVisibleActivity = polyline.activity;
 
-    if (polyline.activity.type === 'Run') {
+    if (this.isRun(polyline.activity)) {
       this.runCount += 1;
     }
 
-    if (polyline.activity.type === 'Ride') {
+    if (this.isRide(polyline.activity)) {
       this.rideCount += 1;
     }
   }
 
   private hidePolyline(polyline: any) {
     if (polyline.visible) {
-      polyline.remove(this.map);
       polyline.visible = false;
+      if (this.isRun(polyline.activity)) {
+        this.runsLayer.removeLayer(polyline);
+      }
+      if (this.isRide(polyline.activity)) {
+        this.ridesLayer.removeLayer(polyline);
+      }
     }
   }
 
@@ -141,7 +172,7 @@ export class AppComponent implements OnInit {
     this.sortPolylines();
     this.createMap();
 
-    this.filterChanged();
+    this.filterChanged(this.view.All);
     this.configureLocation();
   }
 
@@ -166,17 +197,17 @@ export class AppComponent implements OnInit {
       }
     );
 
-    const runs = L.layerGroup(
+    this.runsLayer = L.layerGroup(
       this.polylines.filter((p) => this.isRun(p.activity))
     );
-    const rides = L.layerGroup(
+    this.ridesLayer = L.layerGroup(
       this.polylines.filter((p) => this.isRide(p.activity))
     );
 
     this.map = L.map('map', {
       center: this.mapCenter,
       zoom: this.mapDefaultZoom,
-      layers: [normalMap, darkMap, runs, rides]
+      layers: [normalMap, darkMap, this.runsLayer, this.ridesLayer]
     });
 
     const baseMaps = {
@@ -185,8 +216,8 @@ export class AppComponent implements OnInit {
     };
 
     const overlays = {
-      Runs: runs,
-      Rides: rides
+      Runs: this.runsLayer,
+      Rides: this.ridesLayer
     };
 
     L.control.layers(baseMaps, overlays).addTo(this.map);
@@ -220,6 +251,7 @@ export class AppComponent implements OnInit {
       const coordinates = L.Polyline.fromEncoded(
         stream.map.summary_polyline
       ).getLatLngs();
+
       const polyline = L.polyline(coordinates, {
         color: this.isRun(stream) ? this.runColor : this.rideColor,
         weight: 3,
@@ -231,9 +263,6 @@ export class AppComponent implements OnInit {
 
       this.polylines.push(polyline);
     });
-
-    this.endRange = this.polylines.length;
-    this.rangePosition = this.polylines.length;
   }
 
   isRun(activity: any) {

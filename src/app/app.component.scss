@@ -13,7 +13,7 @@ $mapSwitch-color: #ff0783;
 }
 
 .map-container {
-  height: calc(100vh - 104px);
+  height: calc(100vh - 110px);
 }
 
 .leaflet-tile {
@@ -29,61 +29,12 @@ $mapSwitch-color: #ff0783;
   height: 100%;
 }
 
-.slider-container {
-  padding: 4px 15px;
-}
-
 .controls {
   margin-bottom: 5px;
 }
 
-.slider {
-  -webkit-appearance: none;
-  width: 96%;
-  height: 15px;
-  border-radius: 5px;
-  background: #d3d3d3;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: 0.2s;
-  transition: opacity 0.2s;
-}
-
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  background: $highlight-color;
-  cursor: pointer;
-}
-
-.slider::-moz-range-thumb {
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  background: $highlight-color;
-  cursor: pointer;
-}
-
-.btn-last {
-  line-height: 0.2rem;
-  padding: 5px 10px;
-  margin-right: 5px;
-}
-
-.btn-next {
-  line-height: 0.2rem;
-  padding: 5px 10px;
-  margin-left: 5px;
-}
-
-.legend {
-  display: inline-block;
-  padding: 0 0.4em;
-  font-size: 75%;
+.list-group .list-group-item {
   text-align: center;
-  vertical-align: top;
-  color: white;
+  padding: 2px;
+  cursor: pointer;
 }
