@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { StravaService } from './strava.service';
-
+import * as moment from 'moment';
+import { View } from './types/View';
+import { Activity } from './types/Activity';
+import { Polyline } from './types/Polyline';
 declare var L: any;
 
 @Component({
@@ -13,7 +16,7 @@ export class AppComponent implements OnInit {
   private mapCenter = [50.883269, -0.135436];
   private mapDefaultZoom = 11;
   private currentLocation;
-  activities: any;
+  activities: Activity[];
   runCount = 0;
   rideCount = 0;
   totalDistance = 0;
@@ -21,19 +24,17 @@ export class AppComponent implements OnInit {
   authenticating = false;
   loading = false;
   loaded = false;
-  endRange = 0;
-  rangePosition = 0;
   map: any;
-  mapBackground: any;
-  polylines = [];
+  polylines: Polyline[] = [];
+  runPolylines: Polyline[] = [];
+  ridePolylines: Polyline[] = [];
+  runsLayer: any;
+  ridesLayer: any;
   rideColor = '#2B54D4';
   runColor = '#E63419';
-  showRuns = true;
-  showRides = true;
-  overlay = true;
-  showMap = true;
-  visibleCount = 0;
-  lastVisibleActivity: any;
+  lastVisibleActivity: Activity;
+  view = View;
+  currentView = View.All;
 
   constructor(
     private stravaService: StravaService,
@@ -52,43 +53,69 @@ export class AppComponent implements OnInit {
     this.authenticating = false;
     this.loading = true;
 
-    this.activities = await this.stravaService.getActivities();
+    this.activities = (await this.stravaService.getActivities()) as Activity[];
+
     this.loadHeatmap();
+    this.lastVisibleActivity = this.polylines[
+      this.polylines.length - 1
+    ].activity;
 
     this.loading = false;
     this.loaded = true;
   }
 
-  filterChanged() {
-    this.visibleCount = 0;
+  filterChanged(view: View) {
+    this.currentView = view;
     this.totalDistance = 0;
     this.totalSeconds = 0;
-    this.lastVisibleActivity = null;
     this.runCount = 0;
     this.rideCount = 0;
 
-    for (let i = 0; i < this.polylines.length; i++) {
-      const polyline = this.polylines[i];
-      this.setPolylineVisibility(polyline, i);
-    }
-  }
+    const startOfToday = moment().startOf('day');
+    const lastWeek = moment().subtract(1, 'weeks');
+    const lastMonth = moment().subtract(1, 'months');
+    const lastYear = moment().subtract(1, 'years');
 
-  backOneActivity() {
-    this.rangePosition--;
-    this.filterChanged();
-  }
+    this.polylines.forEach((polyline: Polyline) => {
+      let show = false;
 
-  forwardOneActivity() {
-    this.rangePosition++;
-    this.filterChanged();
-  }
+      switch (this.currentView) {
+        case View.All: {
+          show = true;
+          break;
+        }
+        case View.Year: {
+          if (moment(polyline.activity.start_date).isAfter(lastYear)) {
+            show = true;
+          }
+          break;
+        }
+        case View.Month: {
+          if (moment(polyline.activity.start_date).isAfter(lastMonth)) {
+            show = true;
+          }
+          break;
+        }
+        case View.Week: {
+          if (moment(polyline.activity.start_date).isAfter(lastWeek)) {
+            show = true;
+          }
+          break;
+        }
+        case View.Day: {
+          if (moment(polyline.activity.start_date).isAfter(startOfToday)) {
+            show = true;
+          }
+          break;
+        }
+      }
 
-  showMapChanged() {
-    if (this.showMap) {
-      this.mapBackground.addTo(this.map);
-    } else {
-      this.mapBackground.remove(this.map);
-    }
+      if (show) {
+        this.showPolyline(polyline);
+      } else {
+        this.hidePolyline(polyline);
+      }
+    });
   }
 
   goHome() {
@@ -101,63 +128,53 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private setPolylineVisibility(polyline: any, index: number) {
-    const showActivityType =
-      (this.isRun(polyline.activity) && this.showRuns) ||
-      (this.isRide(polyline.activity) && this.showRides);
-
-    const showRange = index + 1 <= this.rangePosition && this.overlay;
-    const showSingle = index + 1 === this.rangePosition && !this.overlay;
-
-    if ((showActivityType && showRange) || (showActivityType && showSingle)) {
-      this.showPolyline(polyline);
-    } else {
-      this.hidePolyline(polyline);
-    }
-  }
-
-  private showPolyline(polyline: any) {
+  private showPolyline(polyline: Polyline) {
     if (!polyline.visible) {
-      polyline.addTo(this.map);
+      if (this.isRun(polyline.activity)) {
+        this.runsLayer.addLayer(polyline);
+      }
+      if (this.isRide(polyline.activity)) {
+        this.ridesLayer.addLayer(polyline);
+      }
+
       polyline.visible = true;
     }
 
-    this.visibleCount++;
     this.totalDistance += polyline.activity.distance;
     this.totalSeconds += polyline.activity.moving_time;
-    this.lastVisibleActivity = polyline.activity;
 
-    if (polyline.activity.type === 'Run') {
+    if (this.isRun(polyline.activity)) {
       this.runCount += 1;
     }
 
-    if (polyline.activity.type === 'Ride') {
+    if (this.isRide(polyline.activity)) {
       this.rideCount += 1;
     }
   }
 
-  private hidePolyline(polyline: any) {
+  private hidePolyline(polyline: Polyline) {
     if (polyline.visible) {
-      polyline.remove(this.map);
       polyline.visible = false;
+      if (this.isRun(polyline.activity)) {
+        this.runsLayer.removeLayer(polyline);
+      }
+      if (this.isRide(polyline.activity)) {
+        this.ridesLayer.removeLayer(polyline);
+      }
     }
   }
 
   private async loadHeatmap() {
-    this.createMap();
     this.createPolylines(this.activities);
     this.sortPolylines();
-    this.filterChanged();
+    this.createMap();
+
+    this.filterChanged(this.view.All);
     this.configureLocation();
   }
 
   private createMap() {
-    this.map = L.map('map', {
-      center: this.mapCenter,
-      zoom: this.mapDefaultZoom
-    });
-
-    this.mapBackground = L.tileLayer(
+    const normalMap = L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
         maxZoom: 19,
@@ -167,7 +184,40 @@ export class AppComponent implements OnInit {
       }
     );
 
-    this.mapBackground.addTo(this.map);
+    const darkMap = L.tileLayer(
+      'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+      {
+        maxZoom: 19,
+        attribution:
+          // tslint:disable-next-line:max-line-length
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+      }
+    );
+
+    this.runsLayer = L.layerGroup(
+      this.polylines.filter((p) => this.isRun(p.activity))
+    );
+    this.ridesLayer = L.layerGroup(
+      this.polylines.filter((p) => this.isRide(p.activity))
+    );
+
+    this.map = L.map('map', {
+      center: this.mapCenter,
+      zoom: this.mapDefaultZoom,
+      layers: [normalMap, darkMap, this.runsLayer, this.ridesLayer]
+    });
+
+    const baseMaps = {
+      Standard: normalMap,
+      Dark: darkMap
+    };
+
+    const overlays = {
+      Runs: this.runsLayer,
+      Rides: this.ridesLayer
+    };
+
+    L.control.layers(baseMaps, overlays).addTo(this.map);
   }
 
   private configureLocation() {
@@ -189,7 +239,7 @@ export class AppComponent implements OnInit {
     });
   }
 
-  private createPolylines(activityStreams: any[]) {
+  private createPolylines(activityStreams: Activity[]) {
     activityStreams.forEach((stream) => {
       if (!stream.map.summary_polyline) {
         return;
@@ -198,6 +248,7 @@ export class AppComponent implements OnInit {
       const coordinates = L.Polyline.fromEncoded(
         stream.map.summary_polyline
       ).getLatLngs();
+
       const polyline = L.polyline(coordinates, {
         color: this.isRun(stream) ? this.runColor : this.rideColor,
         weight: 3,
@@ -209,23 +260,21 @@ export class AppComponent implements OnInit {
 
       this.polylines.push(polyline);
     });
-
-    this.endRange = this.polylines.length;
-    this.rangePosition = this.polylines.length;
   }
 
-  isRun(activity: any) {
+  isRun(activity: Activity) {
     return activity.type === 'Run';
   }
 
-  isRide(activity: any) {
-    return !this.isRun(activity);
+  isRide(activity: Activity) {
+    return activity.type === 'Ride';
   }
 
-  private createPolylinePopup(activity: any) {
+  private createPolylinePopup(activity: Activity) {
     return (
       `<b><a href="https://www.strava.com/activities/${activity.id}" target="_blank">${activity.name}</a></b> | ` +
-      `${this.datePipe.transform(activity.start_date, 'shortDate')}<br>` +
+      `${this.getTimeSince(activity.start_date)}<br>` +
+      `Date: ${this.datePipe.transform(activity.start_date, 'shortDate')}<br>` +
       `Distance: ${this.decimalPipe.transform(
         this.distanceToMiles(activity.distance),
         '1.0-1'
@@ -249,6 +298,10 @@ export class AppComponent implements OnInit {
 
   secondsToHours(time: number) {
     return time / 60 / 60;
+  }
+
+  getTimeSince(startDate: string) {
+    return moment(startDate).fromNow();
   }
 
   private getDuration(durationInSeconds: number) {

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BlobServiceClient } from '@azure/storage-blob';
-import { IStravaTokenInfo } from './IStravaTokenInfo';
+import { IStravaTokenInfo } from './types/IStravaTokenInfo';
+import { Activity } from './types/Activity';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,6 @@ export class StravaService {
 
   private stravaClientId = 'CLIENT_ID';
   private stravaClientSecret = 'CLIENT_SECRET';
-  // tslint:disable-next-line:max-line-length
   private azureBlobConnectionString = 'BLOB_CONNECTION';
   private azureContainerName = 'strava';
   private azureBlobName = 'strava.json';
@@ -72,13 +72,13 @@ export class StravaService {
     });
   }
 
-  getActivities() {
+  getActivities(): Promise<Activity[]> {
     return this.http
       .get(
         `https://www.strava.com/api/v3/athlete/activities?page=1&per_page=200`,
         this.getStravaHeaders()
       )
-      .toPromise();
+      .toPromise() as Promise<Activity[]>;
   }
 
   private getStravaHeaders() {

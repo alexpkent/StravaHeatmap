@@ -2,8 +2,7 @@
   <nav *ngIf="loaded"
        class="navbar navbar-dark bg-dark pb-0">
     <span class="navbar-brand mb-0 mr-1 h1 text-warning">
-      Alex's Strava Heat Map
-
+      Strava Heat Map
     </span>
 
     <span class="navbar-text home mr-auto mt-1">
@@ -17,10 +16,10 @@
            *ngIf="isRun(lastVisibleActivity)"></i>
         <i class="fas fa-biking fa-lg ml-1 mr-1"
            *ngIf="isRide(lastVisibleActivity)"></i>
-        {{lastVisibleActivity.start_date | timeSince}}</a>
+        {{getTimeSince(lastVisibleActivity.start_date)}}</a>
     </span>
 
-    <span class="navbar-text small summary pt-0"
+    <span class="navbar-text small summary pt-0 pb-0 mb-2 mt-n1"
           *ngIf="loaded">
       {{distanceToMiles(totalDistance) | number:'1.0-0'}} Miles<span class="text-warning"> | </span>
       {{secondsToHours(totalSeconds) | number:'1.0-0'}} Hours<span class="text-warning"> | </span>
@@ -48,99 +47,36 @@
   <div class="controls"
        *ngIf="loaded">
 
-    <div class="d-flex pb-0 pt-0">
-      <span class="ml-3 pb-0">
-
-        <div class="switch map">
-          <div class="onoffswitch">
-            <input type="checkbox"
-                   name="collapsemenu"
-                   class="onoffswitch-checkbox"
-                   id="mapCheck"
-                   [(ngModel)]="showMap"
-                   (ngModelChange)="showMapChanged()">
-            <label class="onoffswitch-label"
-                   for="mapCheck">
-              <span class="onoffswitch-inner"></span>
-              <span class="onoffswitch-switch"></span>
-            </label>
-          </div>
-        </div>
-
-        <div class="switch overlay">
-          <div class="onoffswitch">
-            <input type="checkbox"
-                   name="collapsemenu"
-                   class="onoffswitch-checkbox"
-                   id="singleCheck"
-                   [(ngModel)]="overlay"
-                   (ngModelChange)="filterChanged()">
-            <label class="onoffswitch-label"
-                   for="singleCheck">
-              <span class="onoffswitch-inner"></span>
-              <span class="onoffswitch-switch"></span>
-            </label>
-          </div>
-        </div>
-
-        <div class="switch runs">
-          <div class="onoffswitch">
-            <input type="checkbox"
-                   name="collapsemenu"
-                   class="onoffswitch-checkbox"
-                   id="runsCheck"
-                   [(ngModel)]="showRuns"
-                   (ngModelChange)="filterChanged()">
-            <label class="onoffswitch-label"
-                   for="runsCheck">
-              <span class="onoffswitch-inner"></span>
-              <span class="onoffswitch-switch"></span>
-            </label>
-          </div>
-        </div>
-
-        <div class="switch rides">
-          <div class="onoffswitch">
-            <input type="checkbox"
-                   name="collapsemenu"
-                   class="onoffswitch-checkbox"
-                   id="ridesCheck"
-                   [(ngModel)]="showRides"
-                   (ngModelChange)="filterChanged()">
-            <label class="onoffswitch-label"
-                   for="ridesCheck">
-              <span class="onoffswitch-inner"></span>
-              <span class="onoffswitch-switch"></span>
-            </label>
-          </div>
-        </div>
-
-      </span>
-
-    </div>
-    <div class="slider-container d-flex justify-content-between">
-      <button type="button"
-              class="btn btn-warning btn-last"
-              (click)="backOneActivity()"
-              [disabled]="rangePosition == 1">&laquo;</button>
-
-      <input type="range"
-             min="1"
-             [attr.max]="endRange"
-             [(ngModel)]="rangePosition"
-             (ngModelChange)="filterChanged()"
-             class="slider w-100"
-             id="dateSlider">
-
-      <button type="button"
-              class="btn btn-warning btn-next"
-              (click)="forwardOneActivity()"
-              [disabled]="rangePosition == endRange">&raquo;</button>
-    </div>
+    <ul class="list-group list-group-horizontal">
+      <li class="list-group-item flex-fill text-white bg-secondary"
+          [ngClass]="{'bg-warning text-dark': currentView == view.Day}"
+          (click)="filterChanged(view.Day)">
+        Day
+      </li>
+      <li class="list-group-item flex-fill text-white bg-secondary"
+          [ngClass]="{'bg-warning text-dark': currentView == view.Week}"
+          (click)="filterChanged(view.Week)">
+        Week
+      </li>
+      <li class="list-group-item flex-fill text-white bg-secondary"
+          [ngClass]="{'bg-warning text-dark': currentView == view.Month}"
+          (click)="filterChanged(view.Month)">
+        Month
+      </li>
+      <li class="list-group-item flex-fill text-white bg-secondary"
+          [ngClass]="{'bg-warning text-dark': currentView == view.Year}"
+          (click)="filterChanged(view.Year)">
+        Year
+      </li>
+      <li class="list-group-item flex-fill text-white bg-secondary"
+          [ngClass]="{'bg-warning text-dark': currentView == view.All}"
+          (click)="filterChanged(view.All)">
+        All
+      </li>
+    </ul>
   </div>
 
-  <div class="map-container"
-       [ngClass]="{'hide-map' : !showMap}">
+  <div class="map-container">
     <div class="map-frame">
       <div id="map"></div>
     </div>

@@ -9,12 +9,11 @@ import { registerLocaleData } from '@angular/common';
 import { LOCALE_ID } from '@angular/core';
 import localeEnGb from '@angular/common/locales/en-GB';
 import { FormsModule } from '@angular/forms';
-import { TimeSincePipe } from './time-since.pipe';
 
 registerLocaleData(localeEnGb, 'en-GB');
 
 @NgModule({
-  declarations: [AppComponent, TimeSincePipe],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
