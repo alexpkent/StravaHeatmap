@@ -19,7 +19,7 @@
         {{lastVisibleActivity.start_date | timeSince}}</a>
     </span>
 
-    <span class="navbar-text small summary pt-0"
+    <span class="navbar-text small summary pt-0 pb-0 mb-2 mt-n1"
           *ngIf="loaded">
       {{distanceToMiles(totalDistance) | number:'1.0-0'}} Miles<span class="text-warning"> | </span>
       {{secondsToHours(totalSeconds) | number:'1.0-0'}} Hours<span class="text-warning"> | </span>
@@ -47,7 +47,7 @@
   <div class="controls"
        *ngIf="loaded">
 
-    <ul class="list-group pr-2 pl-2 list-group-horizontal">
+    <ul class="list-group list-group-horizontal">
       <li class="list-group-item flex-fill text-white bg-secondary"
           [ngClass]="{'bg-warning text-dark': currentView == view.Day}"
           (click)="filterChanged(view.Day)">

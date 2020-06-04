@@ -2,15 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { StravaService } from './strava.service';
 import * as moment from 'moment';
+import { View } from './types/View';
+import { Activity } from './types/Activity';
+import { Polyline } from './types/Polyline';
 declare var L: any;
-
-enum View {
-  Day = 1,
-  Week,
-  Month,
-  Year,
-  All
-}
 
 @Component({
   selector: 'app-root',
@@ -21,7 +16,7 @@ export class AppComponent implements OnInit {
   private mapCenter = [50.883269, -0.135436];
   private mapDefaultZoom = 11;
   private currentLocation;
-  activities: any;
+  activities: Activity[];
   runCount = 0;
   rideCount = 0;
   totalDistance = 0;
@@ -30,14 +25,14 @@ export class AppComponent implements OnInit {
   loading = false;
   loaded = false;
   map: any;
-  polylines = [];
-  runPolylines = [];
-  ridePolylines = [];
+  polylines: Polyline[] = [];
+  runPolylines: Polyline[] = [];
+  ridePolylines: Polyline[] = [];
   runsLayer: any;
   ridesLayer: any;
   rideColor = '#2B54D4';
   runColor = '#E63419';
-  lastVisibleActivity: any;
+  lastVisibleActivity: Activity;
   view = View;
   currentView = View.All;
 
@@ -58,8 +53,12 @@ export class AppComponent implements OnInit {
     this.authenticating = false;
     this.loading = true;
 
-    this.activities = await this.stravaService.getActivities();
+    this.activities = (await this.stravaService.getActivities()) as Activity[];
+
     this.loadHeatmap();
+    this.lastVisibleActivity = this.polylines[
+      this.polylines.length - 1
+    ].activity;
 
     this.loading = false;
     this.loaded = true;
@@ -69,16 +68,15 @@ export class AppComponent implements OnInit {
     this.currentView = view;
     this.totalDistance = 0;
     this.totalSeconds = 0;
-    this.lastVisibleActivity = null;
     this.runCount = 0;
     this.rideCount = 0;
 
-    const yesterday = moment().subtract(1, 'days');
+    const startOfToday = moment().startOf('day');
     const lastWeek = moment().subtract(1, 'weeks');
     const lastMonth = moment().subtract(1, 'months');
     const lastYear = moment().subtract(1, 'years');
 
-    this.polylines.forEach((polyline) => {
+    this.polylines.forEach((polyline: Polyline) => {
       let show = false;
 
       switch (this.currentView) {
@@ -105,7 +103,7 @@ export class AppComponent implements OnInit {
           break;
         }
         case View.Day: {
-          if (moment(polyline.activity.start_date).isAfter(yesterday)) {
+          if (moment(polyline.activity.start_date).isAfter(startOfToday)) {
             show = true;
           }
           break;
@@ -130,7 +128,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private showPolyline(polyline: any) {
+  private showPolyline(polyline: Polyline) {
     if (!polyline.visible) {
       if (this.isRun(polyline.activity)) {
         this.runsLayer.addLayer(polyline);
@@ -144,7 +142,6 @@ export class AppComponent implements OnInit {
 
     this.totalDistance += polyline.activity.distance;
     this.totalSeconds += polyline.activity.moving_time;
-    this.lastVisibleActivity = polyline.activity;
 
     if (this.isRun(polyline.activity)) {
       this.runCount += 1;
@@ -155,7 +152,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private hidePolyline(polyline: any) {
+  private hidePolyline(polyline: Polyline) {
     if (polyline.visible) {
       polyline.visible = false;
       if (this.isRun(polyline.activity)) {
@@ -242,7 +239,7 @@ export class AppComponent implements OnInit {
     });
   }
 
-  private createPolylines(activityStreams: any[]) {
+  private createPolylines(activityStreams: Activity[]) {
     activityStreams.forEach((stream) => {
       if (!stream.map.summary_polyline) {
         return;
@@ -265,15 +262,15 @@ export class AppComponent implements OnInit {
     });
   }
 
-  isRun(activity: any) {
+  isRun(activity: Activity) {
     return activity.type === 'Run';
   }
 
-  isRide(activity: any) {
-    return !this.isRun(activity);
+  isRide(activity: Activity) {
+    return activity.type === 'Ride';
   }
 
-  private createPolylinePopup(activity: any) {
+  private createPolylinePopup(activity: Activity) {
     return (
       `<b><a href="https://www.strava.com/activities/${activity.id}" target="_blank">${activity.name}</a></b> | ` +
       `${this.datePipe.transform(activity.start_date, 'shortDate')}<br>` +

@@ -13,7 +13,7 @@ $mapSwitch-color: #ff0783;
 }
 
 .map-container {
-  height: calc(100vh - 110px);
+  height: calc(100vh - 105px);
 }
 
 .leaflet-tile {
@@ -29,12 +29,11 @@ $mapSwitch-color: #ff0783;
   height: 100%;
 }
 
-.controls {
-  margin-bottom: 5px;
-}
+.controls {}
 
 .list-group .list-group-item {
   text-align: center;
   padding: 2px;
   cursor: pointer;
+  border-radius: 0px;
 }
