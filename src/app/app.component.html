@@ -16,7 +16,7 @@
            *ngIf="isRun(lastVisibleActivity)"></i>
         <i class="fas fa-biking fa-lg ml-1 mr-1"
            *ngIf="isRide(lastVisibleActivity)"></i>
-        {{lastVisibleActivity.start_date | timeSince}}</a>
+        {{getTimeSince(lastVisibleActivity.start_date)}}</a>
     </span>
 
     <span class="navbar-text small summary pt-0 pb-0 mb-2 mt-n1"

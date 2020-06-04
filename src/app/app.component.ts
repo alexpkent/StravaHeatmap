@@ -273,7 +273,8 @@ export class AppComponent implements OnInit {
   private createPolylinePopup(activity: Activity) {
     return (
       `<b><a href="https://www.strava.com/activities/${activity.id}" target="_blank">${activity.name}</a></b> | ` +
-      `${this.datePipe.transform(activity.start_date, 'shortDate')}<br>` +
+      `${this.getTimeSince(activity.start_date)}<br>` +
+      `Date: ${this.datePipe.transform(activity.start_date, 'shortDate')}<br>` +
       `Distance: ${this.decimalPipe.transform(
         this.distanceToMiles(activity.distance),
         '1.0-1'
@@ -297,6 +298,10 @@ export class AppComponent implements OnInit {
 
   secondsToHours(time: number) {
     return time / 60 / 60;
+  }
+
+  getTimeSince(startDate: string) {
+    return moment(startDate).fromNow();
   }
 
   private getDuration(durationInSeconds: number) {
