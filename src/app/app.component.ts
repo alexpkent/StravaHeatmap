@@ -194,6 +194,27 @@ export class AppComponent implements OnInit {
       }
     );
 
+    const lightMap = L.tileLayer(
+      'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.{ext}',
+      {
+        maxZoom: 19,
+        attribution:
+          // tslint:disable-next-line:max-line-length
+          'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        ext: 'png'
+      }
+    );
+
+    const satelliteMap = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        maxZoom: 19,
+        attribution:
+          // tslint:disable-next-line:max-line-length
+          'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+      }
+    );
+
     this.runsLayer = L.layerGroup(
       this.polylines.filter((p) => this.isRun(p.activity))
     );
@@ -204,11 +225,20 @@ export class AppComponent implements OnInit {
     this.map = L.map('map', {
       center: this.mapCenter,
       zoom: this.mapDefaultZoom,
-      layers: [normalMap, darkMap, this.runsLayer, this.ridesLayer]
+      layers: [
+        darkMap,
+        normalMap,
+        satelliteMap,
+        lightMap,
+        this.runsLayer,
+        this.ridesLayer
+      ]
     });
 
     const baseMaps = {
       Standard: normalMap,
+      Satellite: satelliteMap,
+      Light: lightMap,
       Dark: darkMap
     };
 
@@ -271,8 +301,12 @@ export class AppComponent implements OnInit {
   }
 
   private createPolylinePopup(activity: Activity) {
+    const image = this.isRun(activity)
+      ? '<i class="fas fa-running"></i>'
+      : '<i class="fas fa-biking"></i>';
+
     return (
-      `<b><a href="https://www.strava.com/activities/${activity.id}" target="_blank">${activity.name}</a></b> | ` +
+      `<b>${image} <a href="https://www.strava.com/activities/${activity.id}" target="_blank">${activity.name}</a></b><br>` +
       `${this.getTimeSince(activity.start_date)}<br>` +
       `Date: ${this.datePipe.transform(activity.start_date, 'shortDate')}<br>` +
       `Distance: ${this.decimalPipe.transform(
