@@ -301,8 +301,12 @@ export class AppComponent implements OnInit {
   }
 
   private createPolylinePopup(activity: Activity) {
+    const image = this.isRun(activity)
+      ? '<i class="fas fa-running"></i>'
+      : '<i class="fas fa-biking"></i>';
+
     return (
-      `<b><a href="https://www.strava.com/activities/${activity.id}" target="_blank">${activity.name}</a></b> | ` +
+      `<b>${image} <a href="https://www.strava.com/activities/${activity.id}" target="_blank">${activity.name}</a></b><br>` +
       `${this.getTimeSince(activity.start_date)}<br>` +
       `Date: ${this.datePipe.transform(activity.start_date, 'shortDate')}<br>` +
       `Distance: ${this.decimalPipe.transform(
