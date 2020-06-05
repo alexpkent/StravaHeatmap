@@ -18,6 +18,24 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      - name: Update Blob Connection String
+        uses: jacobtomlinson/gha-find-replace@0.1.1
+        with:
+          find: "BLOB_CONNECTION"
+          replace: ${{ secrets.BLOB_CONNECTION }}
+          include: 'strava.service.ts'  
+      - name: Update Strava Client ID
+        uses: jacobtomlinson/gha-find-replace@0.1.1
+        with:
+          find: "CLIENT_ID"
+          replace: ${{ secrets.CLIENT_ID }}
+          include: 'strava.service.ts' 
+      - name: Update Strava Client Secret
+        uses: jacobtomlinson/gha-find-replace@0.1.1
+        with:
+          find: "CLIENT_SECRET"
+          replace: ${{ secrets.CLIENT_SECRET }}
+          include: 'strava.service.ts'  
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v0.0.1-preview
