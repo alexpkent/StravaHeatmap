@@ -18,7 +18,7 @@ With a number of filters and options such as viewing activities by time, by type
 
 - Add container called `strava`
 - Add file called `strava.json`
-- Enable CORS
+- Enable CORS with * allowed origins, all methods except DELETE, PATCH, * allowed headers.
 - Add account level SAS with only Blob | Read, Write and use 'Blob service SAS URL'
 
 Upload the strava token to `strava.json` in the format of:
