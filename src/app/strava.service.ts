@@ -73,6 +73,7 @@ export class StravaService {
   }
 
   async getActivities(): Promise<Activity[]> {
+    const pageSize = 200;
     let resultCount = 0;
     const activities: Activity[] = [];
     let page = 1;
@@ -80,7 +81,7 @@ export class StravaService {
     do {
       const activityPage = (await this.http
         .get(
-          `https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=200`,
+          `https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=${pageSize}`,
           this.getStravaHeaders()
         )
         .toPromise()) as Activity[];
@@ -89,16 +90,9 @@ export class StravaService {
       activities.push(...activityPage);
 
       page++;
-    } while (resultCount > 0);
+    } while (resultCount === pageSize);
 
     return activities;
-
-    // return this.http
-    //   .get(
-    //     `https://www.strava.com/api/v3/athlete/activities?page=1&per_page=200`,
-    //     this.getStravaHeaders()
-    //   )
-    //   .toPromise() as Promise<Activity[]>;
   }
 
   private getStravaHeaders() {
