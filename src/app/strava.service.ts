@@ -72,13 +72,33 @@ export class StravaService {
     });
   }
 
-  getActivities(): Promise<Activity[]> {
-    return this.http
-      .get(
-        `https://www.strava.com/api/v3/athlete/activities?page=1&per_page=200`,
-        this.getStravaHeaders()
-      )
-      .toPromise() as Promise<Activity[]>;
+  async getActivities(): Promise<Activity[]> {
+    let resultCount = 0;
+    const activities: Activity[] = [];
+    let page = 1;
+
+    do {
+      const activityPage = (await this.http
+        .get(
+          `https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=200`,
+          this.getStravaHeaders()
+        )
+        .toPromise()) as Activity[];
+
+      resultCount = activityPage.length;
+      activities.push(...activityPage);
+
+      page++;
+    } while (resultCount > 0);
+
+    return activities;
+
+    // return this.http
+    //   .get(
+    //     `https://www.strava.com/api/v3/athlete/activities?page=1&per_page=200`,
+    //     this.getStravaHeaders()
+    //   )
+    //   .toPromise() as Promise<Activity[]>;
   }
 
   private getStravaHeaders() {

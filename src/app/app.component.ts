@@ -284,7 +284,7 @@ export class AppComponent implements OnInit {
         weight: 3,
         opacity: 0.6
       });
-      polyline.visible = false;
+      polyline.visible = true;
       polyline.activity = stream;
       polyline.bindPopup(this.createPolylinePopup(stream));
 
