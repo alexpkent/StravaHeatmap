@@ -8,7 +8,7 @@ An angular SPA hosted/backed by a very low cost Azure set-up.
 
 ![site image](screenshots/site.png)
 
-With a number of filters and options such as viewing activities by time, by type, overlayed, with popups and with/without the map.
+With a number of filters and options such as viewing activities by time, by type, with detail popups and with different map providers.
 
 ![site image](screenshots/site_no_map.png)
 
@@ -18,7 +18,7 @@ With a number of filters and options such as viewing activities by time, by type
 
 - Add container called `strava`
 - Add file called `strava.json`
-- Enable CORS with * allowed origins, all methods except DELETE, PATCH, * allowed headers.
+- Enable CORS with _ allowed origins, all methods except DELETE, PATCH, _ allowed headers.
 - Add account level SAS with only Blob service, Container and Object resource types and Read, Write. When generating the SAS use 'Blob service SAS URL'
 
 Upload the strava token to `strava.json` in the format of:
