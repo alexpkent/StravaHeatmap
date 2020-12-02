@@ -21,7 +21,6 @@ export class AppComponent implements OnInit {
   rideCount = 0;
   totalDistance = 0;
   totalSeconds = 0;
-  authenticating = false;
   loading = false;
   loaded = false;
   map: any;
@@ -47,10 +46,6 @@ export class AppComponent implements OnInit {
   }
 
   private async load() {
-    this.authenticating = true;
-
-    // await this.stravaService.getAuthToken();
-    this.authenticating = false;
     this.loading = true;
 
     this.activities = (await this.stravaService.getActivities()) as Activity[];

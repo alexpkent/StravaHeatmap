@@ -87,12 +87,6 @@ async function getActivities(authToken) {
     return activities;
 }
 
-function getStravaHeaders(authToken) {
-    return {
-        "Authorization": `Bearer ${authToken}`,
-    };
-}
-
 async function streamToString(readableStream) {
     return new Promise((resolve, reject) => {
         const chunks = [];
