@@ -73,6 +73,10 @@ export class StravaService {
   }
 
   async getActivities(): Promise<Activity[]> {
+    return (await this.http.get('/api/activities').toPromise()) as Activity[];
+  }
+
+  async getActivities2(): Promise<Activity[]> {
     const pageSize = 200;
     let resultCount = 0;
     const activities: Activity[] = [];
