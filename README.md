@@ -35,8 +35,7 @@ Upload the strava token to `strava.json` in the format of:
 
 ## Static Web App
 
-- Create Static Web App and sign in to GitHub
-- Use the Workflow file 'azure-static-web-apps-polite-island-0959fb903.yml' which declares the GitHub actions to automatically build and deploy the Web App
+- Create Static Web App and sign in to GitHub selecting the repo, Azure will generate the workflow file for the deployment.
 
 This contains the actions that will:
 
@@ -59,22 +58,29 @@ Add a custom rule in the Rule Engine
 - Condition: If 'Request URL' contains the url added above 'something.azureedge.net'
 - Action: Modify response header, Overwrite, HTTP header name: 'feature-policy', HTTP header value: 'geolocation 'self';'
 
-# GitHub Settings
-
-Create secrets for the following which will be used at build time to populate the `strava.service.ts` at build time.
-
-- BLOB_CONNECTION - The Azure storage connection string to for the SAS token created above.
-- CLIENT_ID - The client ID of the Strava API app on the Strava profile page
-- CLIENT_SECRET - The secret of the Strava API app on the Strava profile page
-
 # Code Settings
 
 - `app.component.ts` needs the following:
 
   - `mapCenter` - LatLong coordinates to center the map on load, i.e. the area most the activities exist.
 
+# Deployment Settings
+
+In the Static Web Site in Azure the following configuration items are required which will be loaded by the Azure Function acting as the api endpoint
+
+- BLOB_CONNECTION_STRING - The Azure storage connection string to for the SAS token created above.
+- STRAVA_CLIENT_ID - The client ID of the Strava API app on the Strava profile page
+- STRAVA_CLIENT_SECRET - The secret of the Strava API app on the Strava profile page
+
 # Implementation
 
-On each load the token file will be downloaded from the container blob, if the token is valid it will be used, if not a refresh will be requested from Strava. Then the new token, refresh token and expiration is uploaded to the blob.
+On each load the Azure Function api will be called which will downloaded the Strava token file from the container blob, if the token is valid it will be used, if not a refresh will be requested from Strava. Then the new token, refresh token and expiration is uploaded to the blob.
 
 That token is then used to request the activities from Strava for the associated user.
+
+The above process and all activity info can be accessed via /api/activities route.
+
+# Development/Debugging
+
+1. F5/'npm start' in VsCode to start the Azure Function App for the api
+1. 'ng serve' to build and run the Angular SPA. There is a `proxy.conf.json` file that links the api calls to the local Azure Function.
