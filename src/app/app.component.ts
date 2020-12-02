@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
   private async load() {
     this.authenticating = true;
 
-    await this.stravaService.getAuthToken();
+    // await this.stravaService.getAuthToken();
     this.authenticating = false;
     this.loading = true;
 
