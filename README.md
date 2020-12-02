@@ -79,3 +79,8 @@ On each load the Azure Function api will be called which will downloaded the Str
 That token is then used to request the activities from Strava for the associated user.
 
 The above process and all activity info can be accessed via /api/activities route.
+
+# Development/Debugging
+
+1. F5/'npm start' in VsCode to start the Azure Function App for the api
+1. 'ng serve' to build and run the Angular SPA. There is a `proxy.conf.json` file that links the api calls to the local Azure Function.
