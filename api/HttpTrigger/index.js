@@ -4,12 +4,20 @@ module.exports = async function (context, req) {
     context.log("/activities function processed a request.");
 
     try {
-        const authToken = await getAuthToken(context);
-        context.log("auth token from storage " + authToken);
-        const activities = await getActivities(authToken);
+        // const authToken = await getAuthToken(context);
+        // context.log("auth token from storage " + authToken);
+        // const activities = await getActivities(authToken);
+
+        // context.res = {
+        //     body: activities
+        // };
+
+        // const authToken = await getAuthToken(context);
+        // context.log("auth token from storage " + authToken);
+        // const activities = await getActivities(authToken);
 
         context.res = {
-            body: activities
+            body: context.bindings.stravaBlobIn
         };
     } catch (error) {
         context.res = {
@@ -19,11 +27,6 @@ module.exports = async function (context, req) {
 };
 
 async function getAuthToken(context) {
-    const stravaClientId = process.env.STRAVA_CLIENT_ID;
-    const stravaClientSecret = process.env.STRAVA_CLIENT_SECRET;
-    azureContainerName = "strava";
-    azureBlobName = "strava.json";
-
     let tokenInfo = context.bindings.stravaBlobIn;
     let authToken = tokenInfo.access_token;
     const now = Date.now() / 1000;
@@ -35,22 +38,20 @@ async function getAuthToken(context) {
         return authToken;
     } else {
         context.log("Current token is expired, refreshing");
+        const stravaClientId = process.env.STRAVA_CLIENT_ID;
+        const stravaClientSecret = process.env.STRAVA_CLIENT_SECRET;
 
-        try {
-            var response = await axios.post(
-                `https://www.strava.com/api/v3/oauth/token?client_id=${stravaClientId}&client_secret=${stravaClientSecret}&grant_type=refresh_token&refresh_token=${tokenInfo.refresh_token}`,
-                null
-            );
-            const renewal = response.data;
-            authToken = renewal.access_token;
+        var response = await axios.post(
+            `https://www.strava.com/api/v3/oauth/token?client_id=${stravaClientId}&client_secret=${stravaClientSecret}&grant_type=refresh_token&refresh_token=${tokenInfo.refresh_token}`,
+            null
+        );
+        const renewal = response.data;
+        authToken = renewal.access_token;
 
-            context.log("Uploading new token");
-            context.bindings.stravaBlobOut = renewal;
+        context.log("Uploading new token");
+        context.bindings.stravaBlobOut = renewal;
 
-            return authToken;
-        } catch (error) {
-            context.error(error);
-        }
+        return authToken;
     }
 }
 
