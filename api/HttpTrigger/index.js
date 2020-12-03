@@ -1,4 +1,3 @@
-const { BlobServiceClient } = require("@azure/storage-blob");
 const axios = require("axios");
 
 module.exports = async function (context, req) {
@@ -13,21 +12,12 @@ module.exports = async function (context, req) {
 };
 
 async function getAuthToken(context) {
-    const azureBlobConnectionString = process.env.BLOB_CONNECTION_STRING;
     const stravaClientId = process.env.STRAVA_CLIENT_ID;
     const stravaClientSecret = process.env.STRAVA_CLIENT_SECRET;
     azureContainerName = "strava";
     azureBlobName = "strava.json";
 
-    const blobService = new BlobServiceClient(azureBlobConnectionString);
-    const containerClient = blobService.getContainerClient(
-        this.azureContainerName
-    );
-    const blobClient = containerClient.getBlobClient(this.azureBlobName);
-    const blobData = await blobClient.download();
-    const blob = await streamToString(blobData.readableStreamBody);
-
-    let tokenInfo = JSON.parse(blob);
+    let tokenInfo = context.bindings.stravaBlobIn;
     let authToken = tokenInfo.access_token;
     const now = Date.now() / 1000;
 
@@ -48,13 +38,7 @@ async function getAuthToken(context) {
             authToken = renewal.access_token;
 
             context.log("Uploading new token");
-            const blockBlobClient = containerClient.getBlockBlobClient(
-                this.azureBlobName
-            );
-            await blockBlobClient.upload(
-                JSON.stringify(renewal),
-                JSON.stringify(renewal).length
-            );
+            context.bindings.stravaBlobOut = renewal;
 
             return authToken;
         } catch (error) {
@@ -85,17 +69,4 @@ async function getActivities(authToken) {
     } while (resultCount === pageSize);
 
     return activities;
-}
-
-async function streamToString(readableStream) {
-    return new Promise((resolve, reject) => {
-        const chunks = [];
-        readableStream.on("data", (data) => {
-            chunks.push(data.toString());
-        });
-        readableStream.on("end", () => {
-            resolve(chunks.join(""));
-        });
-        readableStream.on("error", reject);
-    });
 }
