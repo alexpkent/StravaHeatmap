@@ -4,20 +4,12 @@ module.exports = async function (context, req) {
     context.log("/activities function processed a request.");
 
     try {
-        // const authToken = await getAuthToken(context);
-        // context.log("auth token from storage " + authToken);
-        // const activities = await getActivities(authToken);
-
-        // context.res = {
-        //     body: activities
-        // };
-
-        // const authToken = await getAuthToken(context);
-        // context.log("auth token from storage " + authToken);
-        // const activities = await getActivities(authToken);
+        const authToken = await getAuthToken(context);
+        context.log("auth token from storage " + authToken);
+        const activities = await getActivities(authToken);
 
         context.res = {
-            body: context.bindings.stravaBlobIn
+            body: activities
         };
     } catch (error) {
         context.res = {
