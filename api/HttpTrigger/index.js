@@ -2,13 +2,20 @@ const axios = require("axios");
 
 module.exports = async function (context, req) {
     context.log("/activities function processed a request.");
-    const authToken = await getAuthToken(context);
-    context.log("auth token from storage " + authToken);
-    const activities = await getActivities(authToken);
 
-    context.res = {
-        body: activities,
-    };
+    try {
+        const authToken = await getAuthToken(context);
+        context.log("auth token from storage " + authToken);
+        const activities = await getActivities(authToken);
+
+        context.res = {
+            body: activities
+        };
+    } catch (error) {
+        context.res = {
+            body: error
+        };
+    }
 };
 
 async function getAuthToken(context) {
