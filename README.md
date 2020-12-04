@@ -18,7 +18,6 @@ With a number of filters and options such as viewing activities by time, by type
 
 - Add container called `strava`
 - Add file called `strava.json`
-- Enable CORS with _ allowed origins, all methods except DELETE, PATCH, _ allowed headers.
 
 Upload the strava token to `strava.json` in the format of:
 
