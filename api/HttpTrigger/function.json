@@ -2,6 +2,7 @@
   "bindings": [
     {
       "authLevel": "anonymous",
+      "connection": "BLOB_CONNECTION_STRING",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
@@ -14,6 +15,20 @@
       "type": "http",
       "direction": "out",
       "name": "res"
+    },
+    {
+      "name": "stravaBlobIn",
+      "type": "blob",
+      "path": "strava/strava.json",
+      "connection": "BLOB_CONNECTION_STRING",
+      "direction": "in"
+    },
+    {
+      "name": "stravaBlobOut",
+      "type": "blob",
+      "path": "strava/strava.json",
+      "connection": "BLOB_CONNECTION_STRING",
+      "direction": "out"
     }
   ]
 }

@@ -42,7 +42,7 @@ This contains the actions that will:
 - On creation of a PR deploy to a staging deployment in the Azure Static Web app to test changes.
 - On merge of PR into master delete the staging deployment, build master and deploy the new build into the main deployment
 
-## CDN (Optional)
+## CDN (Optional but also improves load times)
 
 Static Web Apps by default allocate a unique url with no geolocation headers enabled, an easy way to provide a custom URL and allow modification of headers to provide the current location on the map is to put a CDN in front of the static site.
 
@@ -82,5 +82,7 @@ The above process and all activity info can be accessed via /api/activities rout
 
 # Development/Debugging
 
-1. F5/'npm start' in VsCode to start the Azure Function App for the api
-1. 'ng serve' to build and run the Angular SPA. There is a `proxy.conf.json` file that links the api calls to the local Azure Function.
+1. F5/'npm start' in VsCode to start the Azure Function App for the api.
+   - There is a `local.settings.json` file that contains the Cofig settings specified above in Deployment Settings.
+2. 'ng serve' to build and run the Angular SPA.
+   - There is a `proxy.conf.json` file that links the api calls to the local Azure Function.
