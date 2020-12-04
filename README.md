@@ -19,7 +19,6 @@ With a number of filters and options such as viewing activities by time, by type
 - Add container called `strava`
 - Add file called `strava.json`
 - Enable CORS with _ allowed origins, all methods except DELETE, PATCH, _ allowed headers.
-- Add account level SAS with only Blob service, Container and Object resource types and Read, Write. When generating the SAS use 'Blob service SAS URL'
 
 Upload the strava token to `strava.json` in the format of:
 
@@ -68,7 +67,7 @@ Add a custom rule in the Rule Engine
 
 In the Static Web Site in Azure the following configuration items are required which will be loaded by the Azure Function acting as the api endpoint
 
-- BLOB_CONNECTION_STRING - The Azure storage connection string to for the SAS token created above.
+- BLOB_CONNECTION_STRING - The Azure storage connection string.
 - STRAVA_CLIENT_ID - The client ID of the Strava API app on the Strava profile page
 - STRAVA_CLIENT_SECRET - The secret of the Strava API app on the Strava profile page
 
