@@ -220,14 +220,7 @@ export class AppComponent implements OnInit {
     this.map = L.map('map', {
       center: this.mapCenter,
       zoom: this.mapDefaultZoom,
-      layers: [
-        darkMap,
-        normalMap,
-        satelliteMap,
-        lightMap,
-        this.runsLayer,
-        this.ridesLayer
-      ]
+      layers: [darkMap, this.runsLayer, this.ridesLayer]
     });
 
     const baseMaps = {
