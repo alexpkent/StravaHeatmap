@@ -9,4 +9,5 @@ export class Activity {
   distance: number;
   // tslint:disable-next-line:variable-name
   moving_time: number;
+  external_id: string;
 }
