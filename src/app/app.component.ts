@@ -355,7 +355,7 @@ export class AppComponent implements OnInit {
 
   private getGarminLink(externalId: string): string {
     const activityId = this.getGarminActivityId(externalId);
-    if (!activityId) return '';
+    if (!activityId) return '<br>';
 
     return ` | <b><a href="https://connect.garmin.com/modern/activity/${activityId}" target="_blank">Garmin</a></b><br>`;
   }
