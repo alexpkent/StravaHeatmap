@@ -16,11 +16,15 @@
          *ngIf="isRide(lastVisibleActivity)"></i>
       <span>&nbsp;{{getTimeSince(lastVisibleActivity.start_date)}}&nbsp;</span>
       |&nbsp;<a href="https://www.strava.com/activities/{{lastVisibleActivity.id}}"
-         target="_blank">
-        Strava</a>
+         target="_blank"
+         title="Strava">
+        <i class="fab fa-strava fa-lg ml-1 mr-1"></i>
+      </a>
+      <span>&nbsp;|&nbsp;</span>
       <a href="https://connect.garmin.com/modern/activity/{{getGarminActivityId(lastVisibleActivity.external_id)}}"
          *ngIf="getGarminActivityId(lastVisibleActivity.external_id)"
-         target="_blank">&nbsp;|&nbsp;Garmin</a>
+         target="_blank"
+         title="Garmin"><i class="fas fa-caret-square-up fa-lg ml-1 mr-1"></i></a>
     </span>
 
     <span class="navbar-text small summary pt-0 pb-0 mb-2 mt-n1"
