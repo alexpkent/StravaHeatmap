@@ -31,6 +31,8 @@ Upload the strava token to `strava.json` in the format of:
 }
 ```
 
+As sourced from Strava following [this process](https://developers.strava.com/docs/getting-started/)
+
 ## Static Web App
 
 - Create Static Web App and sign in to GitHub selecting the repo, Azure will generate the workflow file for the deployment.
