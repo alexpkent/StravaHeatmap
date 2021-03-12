@@ -6,7 +6,26 @@ module.exports = async function (context, req) {
     try {
         const authToken = await getAuthToken(context);
         context.log("auth token from storage " + authToken);
-        const activities = await getActivities(authToken);
+        let activities;
+
+        var savedActivities = context.bindings.activitiesBlobIn;
+        if (savedActivities) {
+            savedActivities.sort((a, b) => new Date(b.start_date) - new Date(a.start_date));
+            const lastSavedActivity = savedActivities[0];
+            const lastActivityTimestamp = new Date(lastSavedActivity.start_date).getTime() / 1000;
+            context.log("last saved activity date: " + lastActivityTimestamp);
+            const newActivities = await getActivities(authToken, lastActivityTimestamp);
+
+            context.log(`Adding: ${newActivities.length} new activities to storage`);
+            activities = [...newActivities, ...savedActivities];
+        }
+        else {
+            context.log('No saved activities, fetching all from Strava');
+            activities = await getActivities(authToken);
+        }
+
+        context.bindings.activitiesBlobOut = JSON.stringify(activities, null, 2);
+        context.log(`Total saved activity count: ${activities.length}`);
 
         context.res = {
             body: activities
@@ -47,15 +66,17 @@ async function getAuthToken(context) {
     }
 }
 
-async function getActivities(authToken) {
+async function getActivities(authToken, after) {
     const pageSize = 200;
     let resultCount = 0;
     const activities = [];
     let page = 1;
 
     do {
-        const activityPage = await axios.get(
-            `https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=${pageSize}`,
+        const request = after == undefined ? `https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=${pageSize}` :
+            `https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=${pageSize}&after=${after}`;
+
+        const activityPage = await axios.get(request,
             {
                 headers: {
                     'Authorization': `Bearer ${authToken}`

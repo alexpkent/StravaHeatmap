@@ -29,6 +29,20 @@
       "path": "strava/strava.json",
       "connection": "BLOB_CONNECTION_STRING",
       "direction": "out"
+    },
+    {
+      "name": "activitiesBlobIn",
+      "type": "blob",
+      "path": "strava/activities.json",
+      "connection": "BLOB_CONNECTION_STRING",
+      "direction": "in"
+    },
+    {
+      "name": "activitiesBlobOut",
+      "type": "blob",
+      "path": "strava/activities.json",
+      "connection": "BLOB_CONNECTION_STRING",
+      "direction": "out"
     }
   ]
 }
