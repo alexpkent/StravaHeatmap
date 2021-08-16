@@ -4,7 +4,7 @@ Similar to the paid version from Strava this will overlay all Strava map activit
 
 Routes are darker colours the more they have been run/ridden.
 
-An angular SPA hosted/backed by a very low cost Azure set-up.
+An angular SPA hosted/backed by a very low cost (free!) Azure set-up.
 
 ![site image](screenshots/site.png)
 
