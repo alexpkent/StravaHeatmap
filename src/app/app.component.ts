@@ -24,6 +24,7 @@ export class AppComponent implements OnInit {
   loading = false;
   loaded = false;
   map: any;
+  markers: any;
   polylines: Polyline[] = [];
   runPolylines: Polyline[] = [];
   ridePolylines: Polyline[] = [];
@@ -51,9 +52,8 @@ export class AppComponent implements OnInit {
     this.activities = (await this.stravaService.getActivities()) as Activity[];
 
     this.loadHeatmap();
-    this.lastVisibleActivity = this.polylines[
-      this.polylines.length - 1
-    ].activity;
+    this.lastVisibleActivity =
+      this.polylines[this.polylines.length - 1].activity;
 
     this.loading = false;
     this.loaded = true;
@@ -236,6 +236,7 @@ export class AppComponent implements OnInit {
     };
 
     L.control.layers(baseMaps, overlays).addTo(this.map);
+    this.map.addLayer(this.markers);
   }
 
   private configureLocation() {
@@ -258,6 +259,11 @@ export class AppComponent implements OnInit {
   }
 
   private createPolylines(activityStreams: Activity[]) {
+    this.markers = L.markerClusterGroup({
+      showCoverageOnHover: false,
+      singleMarkerMode: true
+    });
+
     activityStreams.forEach((stream) => {
       if (!stream.map.summary_polyline) {
         return;
@@ -276,6 +282,10 @@ export class AppComponent implements OnInit {
       polyline.activity = stream;
       polyline.bindPopup(this.createPolylinePopup(stream));
 
+      var marker = L.marker(stream.start_latlng, { title: stream.name });
+      marker.bindPopup(this.createPolylinePopup(stream));
+      this.markers.addLayer(marker);
+
       this.polylines.push(polyline);
     });
   }
@@ -292,8 +302,6 @@ export class AppComponent implements OnInit {
     const image = this.isRun(activity)
       ? '<i class="fas fa-running"></i>'
       : '<i class="fas fa-biking"></i>';
-
-    const garminId = this.getGarminLink(activity.external_id);
 
     return (
       `<b>${image} | ${activity.name}</b><br>` +

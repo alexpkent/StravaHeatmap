@@ -2,7 +2,7 @@
 
 Similar to the paid version from Strava this will overlay all Strava map activity on a [Leaflet](https://leafletjs.com/) map with summary data and activity selection controls.
 
-Routes are darker colours the more they have been run/ridden.
+Routes are darker colours the more they have been run/ridden and cluster markers display the number of activities starting in each area automatically updating with the zoom level.
 
 An angular SPA hosted/backed by a very low cost (free!) Azure set-up.
 
@@ -11,6 +11,10 @@ An angular SPA hosted/backed by a very low cost (free!) Azure set-up.
 With a number of filters and options such as viewing activities by time, by type, with detail popups and with different map providers.
 
 ![site image](screenshots/site_no_map.png)
+
+Region count summary markers.
+
+![site image](screenshots/markers.png)
 
 # Azure Setup
 
