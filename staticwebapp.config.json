@@ -2,6 +2,7 @@
     "globalHeaders": {
         "X-Frame-Options": "SAMEORIGIN",
         "feature-policy": "geolocation 'self';",
-        "Permissions-Policy": "geolocation=(self)"
+        "Permissions-Policy": "geolocation=(self)",
+        "Content-Security-Policy": "default-src 'self'; script-src *; style-src * 'self'; img-src 'self'"
     }
 }
