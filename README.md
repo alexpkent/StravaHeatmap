@@ -57,11 +57,6 @@ Static Web Apps by default allocate a unique url with no geolocation headers ena
 - Origin Host header: URL of the Static Web App (without https://)
 - Disable HTTP
 
-Add a custom rule in the Rule Engine
-
-- Condition: If 'Request URL' contains the url added above 'something.azureedge.net'
-- Action: Modify response header, Overwrite, HTTP header name: 'feature-policy', HTTP header value: 'geolocation 'self';'
-
 # Code Settings
 
 - `app.component.ts` needs the following:
