@@ -3,6 +3,6 @@
         "X-Frame-Options": "SAMEORIGIN",
         "feature-policy": "geolocation 'self';",
         "Permissions-Policy": "geolocation=(self)",
-        "Content-Security-Policy": "default-src * 'self'; script-src * 'self' 'unsafe-inline' 'unsafe-eval'; style-src * 'self' data: 'unsafe-inline'; img-src * 'self'; font-src * 'self' data:"
+        "Content-Security-Policy": "default-src * 'self'; script-src * 'self' 'unsafe-inline' 'unsafe-eval'; style-src * 'self' data: 'unsafe-inline'; img-src * 'self' 'unsafe-inline'; font-src * 'self' data:"
     }
 }
