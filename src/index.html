@@ -6,7 +6,7 @@
   <title>Strava Heatmap</title>
   <base href="/">
   <meta name="viewport"
-        content="width=device-width, initial-scale=1">
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <link rel="icon"
         type="image/x-icon"
         href="favicon.ico">
@@ -19,6 +19,14 @@
   <script type="text/javascript"
           src="https://rawgit.com/jieter/Leaflet.encoded/master/Polyline.encoded.js">
   </script>
+
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet.locatecontrol@0.76.0/dist/L.Control.Locate.min.css" />
+  <script src="https://unpkg.com/leaflet.locatecontrol@0.76.0/dist/L.Control.Locate.min.js"
+          charset="utf-8"></script>
+
+  <script src="https://unpkg.com/leaflet.zoomhome@1.0.0/dist/leaflet.zoomhome.js"
+          charset="utf-8"></script>
 
   <link rel="stylesheet"
         href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
