@@ -15,7 +15,6 @@ declare var L: any;
 export class AppComponent implements OnInit {
   private mapCenter = [50.883269, -0.135436];
   private mapDefaultZoom = 11;
-  private currentLocation;
   activities: Activity[];
   runCount = 0;
   rideCount = 0;
@@ -113,16 +112,6 @@ export class AppComponent implements OnInit {
     });
   }
 
-  goHome() {
-    this.map.setView(this.mapCenter, this.mapDefaultZoom);
-  }
-
-  goCurrentLocation() {
-    if (this.currentLocation) {
-      this.map.setView(this.currentLocation);
-    }
-  }
-
   private showPolyline(polyline: Polyline) {
     if (!polyline.visible) {
       if (this.isRun(polyline.activity)) {
@@ -165,7 +154,6 @@ export class AppComponent implements OnInit {
     this.createMap();
 
     this.filterChanged(this.view.All);
-    this.configureLocation();
   }
 
   private createMap() {
@@ -209,6 +197,7 @@ export class AppComponent implements OnInit {
     this.map = L.map('map', {
       center: this.mapCenter,
       zoom: this.mapDefaultZoom,
+      zoomControl: false,
       layers: [darkMap, this.runsLayer, this.ridesLayer],
       preferCanvas: true
     });
@@ -225,26 +214,17 @@ export class AppComponent implements OnInit {
     };
 
     L.control.layers(baseMaps, overlays).addTo(this.map);
+
+    L.Control.zoomHome().addTo(this.map);
+
+    L.control
+      .locate({
+        position: 'topleft',
+        keepCurrentZoomLevel: true
+      })
+      .addTo(this.map);
+
     this.map.addLayer(this.markers);
-  }
-
-  private configureLocation() {
-    console.log('Requesting current location');
-    this.map.locate({ setView: false, maxZoom: this.mapDefaultZoom });
-
-    this.map.on('locationfound', (e) => {
-      console.log('locationfound', e);
-      const radius = e.accuracy;
-      this.currentLocation = e.latlng;
-
-      L.marker(e.latlng)
-        .addTo(this.map)
-        .bindPopup(`You are within ${radius} meters from this point`);
-    });
-
-    this.map.on('locationerror', (e) => {
-      console.log('locationerror', e);
-    });
   }
 
   private createPolylines(activityStreams: Activity[]) {
