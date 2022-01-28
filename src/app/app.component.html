@@ -10,6 +10,8 @@
          *ngIf="isRun(lastVisibleActivity)"></i>
       <i class="fas fa-biking fa-lg ml-1 mr-1"
          *ngIf="isRide(lastVisibleActivity)"></i>
+      <i class="fas fa-heartbeat fa-lg ml-1 mr-1"
+         *ngIf="isOtherActivity(lastVisibleActivity)"></i>
       <span>&nbsp;{{getTimeSince(lastVisibleActivity.start_date)}}&nbsp;</span>
       |&nbsp;<a href="https://www.strava.com/activities/{{lastVisibleActivity.id}}"
          target="_blank"
@@ -28,7 +30,8 @@
       {{distanceToMiles(totalDistance) | number:'1.0-0'}} Miles<span class="text-warning"> | </span>
       {{secondsToHours(totalSeconds) | number:'1.0-0'}} Hours<span class="text-warning"> | </span>
       {{runCount}} Runs<span class="text-warning"></span><span class="text-warning"> | </span>
-      {{rideCount}} Rides<span class="text-warning"></span>
+      {{rideCount}} Rides<span class="text-warning"></span><span class="text-warning"> | </span>
+      {{otherActivityCount}} Others<span class="text-warning"></span>
     </span>
 
   </nav>

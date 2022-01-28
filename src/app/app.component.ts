@@ -18,6 +18,7 @@ export class AppComponent implements OnInit {
   activities: Activity[];
   runCount = 0;
   rideCount = 0;
+  otherActivityCount = 0;
   totalDistance = 0;
   totalSeconds = 0;
   loading = false;
@@ -29,8 +30,10 @@ export class AppComponent implements OnInit {
   ridePolylines: Polyline[] = [];
   runsLayer: any;
   ridesLayer: any;
+  otherActivitiesLayer: any;
   rideColor = '#2B54D4';
   runColor = '#E63419';
+  otherActvityColor = '#b316de';
   lastVisibleActivity: Activity;
   view = View;
   currentView = View.All;
@@ -64,6 +67,7 @@ export class AppComponent implements OnInit {
     this.totalSeconds = 0;
     this.runCount = 0;
     this.rideCount = 0;
+    this.otherActivityCount = 0;
 
     const startOfToday = moment().startOf('day');
     const lastWeek = moment().subtract(1, 'weeks');
@@ -113,12 +117,19 @@ export class AppComponent implements OnInit {
   }
 
   private showPolyline(polyline: Polyline) {
+    const isRun = this.isRun(polyline.activity);
+    const isRide = this.isRide(polyline.activity);
+
     if (!polyline.visible) {
-      if (this.isRun(polyline.activity)) {
+      if (isRun) {
         this.runsLayer.addLayer(polyline);
       }
-      if (this.isRide(polyline.activity)) {
+      if (isRide) {
         this.ridesLayer.addLayer(polyline);
+      }
+
+      if (!isRun && !isRide) {
+        this.otherActivitiesLayer.addLayer(polyline);
       }
 
       polyline.visible = true;
@@ -127,23 +138,33 @@ export class AppComponent implements OnInit {
     this.totalDistance += polyline.activity.distance;
     this.totalSeconds += polyline.activity.moving_time;
 
-    if (this.isRun(polyline.activity)) {
+    if (isRun) {
       this.runCount += 1;
     }
 
-    if (this.isRide(polyline.activity)) {
+    if (isRide) {
       this.rideCount += 1;
+    }
+
+    if (!isRun && !isRide) {
+      this.otherActivityCount += 1;
     }
   }
 
   private hidePolyline(polyline: Polyline) {
     if (polyline.visible) {
+      const isRun = this.isRun(polyline.activity);
+      const isRide = this.isRide(polyline.activity);
+
       polyline.visible = false;
-      if (this.isRun(polyline.activity)) {
+      if (isRun) {
         this.runsLayer.removeLayer(polyline);
       }
-      if (this.isRide(polyline.activity)) {
+      if (isRide) {
         this.ridesLayer.removeLayer(polyline);
+      }
+      if (!isRun && !isRide) {
+        this.otherActivitiesLayer.removeLayer(polyline);
       }
     }
   }
@@ -193,12 +214,20 @@ export class AppComponent implements OnInit {
     this.ridesLayer = L.layerGroup(
       this.polylines.filter((p) => this.isRide(p.activity))
     );
+    this.otherActivitiesLayer = L.layerGroup(
+      this.polylines.filter((p) => this.isOtherActivity(p.activity))
+    );
 
     this.map = L.map('map', {
       center: this.mapCenter,
       zoom: this.mapDefaultZoom,
       zoomControl: false,
-      layers: [darkMap, this.runsLayer, this.ridesLayer],
+      layers: [
+        darkMap,
+        this.runsLayer,
+        this.ridesLayer,
+        this.otherActivitiesLayer
+      ],
       preferCanvas: true
     });
 
@@ -210,7 +239,8 @@ export class AppComponent implements OnInit {
 
     const overlays = {
       Runs: this.runsLayer,
-      Rides: this.ridesLayer
+      Rides: this.ridesLayer,
+      Others: this.otherActivitiesLayer
     };
 
     L.control.layers(baseMaps, overlays).addTo(this.map);
@@ -242,8 +272,15 @@ export class AppComponent implements OnInit {
         stream.map.summary_polyline
       ).getLatLngs();
 
+      let color = this.otherActvityColor;
+      if (this.isRun(stream)) {
+        color = this.runColor;
+      } else if (this.isRide(stream)) {
+        color = this.rideColor;
+      }
+
       const polyline = L.polyline(coordinates, {
-        color: this.isRun(stream) ? this.runColor : this.rideColor,
+        color: color,
         weight: 3,
         opacity: 0.6
       });
@@ -267,10 +304,17 @@ export class AppComponent implements OnInit {
     return activity.type === 'Ride';
   }
 
+  isOtherActivity(activity: Activity) {
+    return !this.isRun(activity) && !this.isRide(activity);
+  }
+
   private createPolylinePopup(activity: Activity) {
-    const image = this.isRun(activity)
-      ? '<i class="fas fa-running"></i>'
-      : '<i class="fas fa-biking"></i>';
+    let image = '<i class="fas fa-heartbeat"></i>';
+    if (this.isRun(activity)) {
+      image = '<i class="fas fa-running"></i>';
+    } else if (this.isRide(activity)) {
+      image = '<i class="fas fa-biking"></i>';
+    }
 
     return (
       `<b>${image} | ${activity.name}</b><br>` +
