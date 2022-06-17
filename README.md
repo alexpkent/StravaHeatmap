@@ -48,7 +48,7 @@ This contains the actions that will:
 
 ## CDN (Optional but also improves load times)
 
-Static Web Apps by default allocate a unique url with no geolocation headers enabled, an easy way to provide a custom URL and allow modification of headers to provide the current location on the map is to put a CDN in front of the static site.
+Static Web Apps by default allocate a unique url, an easy way to provide a better, custom URL is to put a CDN in front of the static site which provides a way to choose a url as long as it ends in azureedge.net
 
 - Create Azure CDN (Standard Microsoft tier)
 - Create Endpoint with desired name (azureedge.net will be added after this in the URL)
@@ -82,6 +82,6 @@ The above process and all activity info can be accessed via /api/activities rout
 # Development/Debugging
 
 1. F5/'npm start' in VsCode to start the Azure Function App for the api.
-   - There is a `local.settings.json` file that contains the Cofig settings specified above in Deployment Settings.
+   - There is a `local.settings.json` file that contains the Config settings specified above in Deployment Settings.
 2. 'ng serve' to build and run the Angular SPA.
    - There is a `proxy.conf.json` file that links the api calls to the local Azure Function.
