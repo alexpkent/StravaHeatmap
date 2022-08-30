@@ -46,7 +46,7 @@ This contains the actions that will:
 - On creation of a PR deploy to a staging deployment in the Azure Static Web app to test changes.
 - On merge of PR into master delete the staging deployment, build master and deploy the new build into the main deployment
 
-## CDN (Optional but also improves load times)
+## CDN (Optional)
 
 Static Web Apps by default allocate a unique url, an easy way to provide a better, custom URL is to put a CDN in front of the static site which provides a way to choose a url as long as it ends in azureedge.net
 
@@ -56,6 +56,15 @@ Static Web Apps by default allocate a unique url, an easy way to provide a bette
 - Origin Hostname: URL of the Static Web App (without https://)
 - Origin Host header: URL of the Static Web App (without https://)
 - Disable HTTP
+
+This can cause new activities to not show up immediately due to caching, so a caching rule can be added
+
+- Go to Rules Engine
+- Add Rule
+- 'If Request URL' set to 'Any'
+- Then 'Cache Expiration' set to 'Bypass cache'
+
+This can slow down load times but ensures activities are available immediately.
 
 # Code Settings
 
