@@ -384,8 +384,8 @@ export class AppComponent implements OnInit {
   getGarminActivityId(externalId: string): string {
     if (!externalId) return '';
 
-    const identifier = 'garmin_push_';
-    var identifierIndex = externalId.indexOf(identifier);
+    const identifier = '_';
+    var identifierIndex = externalId.lastIndexOf(identifier);
     if (identifierIndex < 0) {
       return '';
     }
