@@ -3,5 +3,8 @@
         "X-Frame-Options": "SAMEORIGIN",
         "feature-policy": "geolocation 'self';",
         "Permissions-Policy": "geolocation=(self)"
+    },
+    "platform": {
+        "apiRuntime": "node:16"
     }
 }
