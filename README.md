@@ -90,7 +90,8 @@ The above process and all activity info can be accessed via /api/activities rout
 
 # Development/Debugging
 
-1. F5/'npm start' in VsCode to start the Azure Function App for the api.
+1. `cd api`
+1. `npm start`
    - There is a `local.settings.json` file that contains the Config settings specified above in Deployment Settings.
-2. 'ng serve' to build and run the Angular SPA.
+1. In another terminal back in the main directory do `ng serve` to build and run the Angular SPA.
    - There is a `proxy.conf.json` file that links the api calls to the local Azure Function.

@@ -1,6 +1,8 @@
 const axios = require("axios");
 
 module.exports = async function (context, req) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
     context.log("/activities function processed a request.");
 
     try {
