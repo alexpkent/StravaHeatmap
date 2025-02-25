@@ -8,9 +8,10 @@ import { Polyline } from './types/Polyline';
 declare var L: any;
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    standalone: false
 })
 export class AppComponent implements OnInit {
   private mapCenter = [50.883269, -0.135436];
