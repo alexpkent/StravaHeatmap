@@ -90,7 +90,8 @@ The above process and all activity info can be accessed via /api/activities rout
 
 # Development/Debugging
 
-1. F5/'npm start' in VsCode to start the Azure Function App for the api.
-   - There is a `local.settings.json` file that contains the Config settings specified above in Deployment Settings.
-2. 'ng serve' to build and run the Angular SPA.
-   - There is a `proxy.conf.json` file that links the api calls to the local Azure Function.
+1. Install the swa cli via `npm install -g @azure/static-web-apps-cli`
+1. In one terminal `cd api` and then `npm run start` to start the API emulator
+1. In another terminal `ng serve` to start the web server to serve the angular app
+1. In another terminal `swa start http://localhost:4200 --api-location http://localhost:7071`
+1. Then access website on `http://localhost:4280/` which will link the above API and webserver requests together
