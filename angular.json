@@ -67,19 +67,19 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "StravaHeatmap:build",
-            "proxyConfig": "src/proxy.conf.json"
+            "proxyConfig": "src/proxy.conf.json",
+            "buildTarget": "StravaHeatmap:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "StravaHeatmap:build:production"
+              "buildTarget": "StravaHeatmap:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "StravaHeatmap:build"
+            "buildTarget": "StravaHeatmap:build"
           }
         },
         "test": {
