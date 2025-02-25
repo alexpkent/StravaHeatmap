@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { StravaService } from './strava.service';
-import * as moment from 'moment';
+import moment from 'moment';
 import { View } from './types/View';
 import { Activity } from './types/Activity';
 import { Polyline } from './types/Polyline';
