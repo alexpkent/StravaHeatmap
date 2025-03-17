@@ -8,10 +8,10 @@ import { Polyline } from './types/Polyline';
 declare var L: any;
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
-    standalone: false
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  standalone: false
 })
 export class AppComponent implements OnInit {
   private mapCenter = [50.883269, -0.135436];
@@ -209,6 +209,15 @@ export class AppComponent implements OnInit {
       }
     );
 
+    const pisteMap = L.tileLayer(
+      'https://tiles.opensnowmap.org/pistes/{z}/{x}/{y}.png',
+      {
+        maxZoom: 19,
+        attribution:
+          'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & ODbL, &copy; <a href="https://www.opensnowmap.org/iframes/data.html">www.opensnowmap.org</a> <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+      }
+    );
+
     this.runsLayer = L.layerGroup(
       this.polylines.filter((p) => this.isRun(p.activity))
     );
@@ -235,7 +244,8 @@ export class AppComponent implements OnInit {
     const baseMaps = {
       Standard: normalMap,
       Satellite: satelliteMap,
-      Dark: darkMap
+      Dark: darkMap,
+      Piste: pisteMap
     };
 
     const overlays = {

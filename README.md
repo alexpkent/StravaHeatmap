@@ -2,6 +2,8 @@
 
 Similar to the paid version from Strava this will overlay all Strava map activity on a [Leaflet](https://leafletjs.com/) map with summary data and activity selection controls.
 
+More base maps can be added as [listed here](https://leaflet-extras.github.io/leaflet-providers/preview/).
+
 Routes are darker colours the more they have been run/ridden and cluster markers display the number of activities starting in each area automatically updating with the zoom level.
 
 An angular SPA hosted/backed by a very low cost (free!) Azure set-up.
