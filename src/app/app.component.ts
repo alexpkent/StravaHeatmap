@@ -329,8 +329,7 @@ export class AppComponent implements OnInit {
 
     return (
       `<b>${image} | ${activity.name}</b><br>` +
-      `<b><a href="https://www.strava.com/activities/${activity.id}" target="_blank">Strava</a></b>` +
-      `${this.getGarminLink(activity.external_id)}` +
+      `<b><a href="https://www.strava.com/activities/${activity.id}" target="_blank">Strava</a></b><br>` +
       `${this.getTimeSince(activity.start_date)}<br>` +
       `Date: ${this.datePipe.transform(activity.start_date, 'shortDate')}<br>` +
       `Distance: ${this.decimalPipe.transform(
@@ -385,26 +384,4 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private getGarminLink(externalId: string): string {
-    const activityId = this.getGarminActivityId(externalId);
-    if (!activityId) return '<br>';
-
-    return ` | <b><a href="https://connect.garmin.com/modern/activity/${activityId}" target="_blank">Garmin</a></b><br>`;
-  }
-
-  getGarminActivityId(externalId: string): string {
-    if (!externalId) return '';
-
-    const identifier = '_';
-    var identifierIndex = externalId.lastIndexOf(identifier);
-    if (identifierIndex < 0) {
-      return '';
-    }
-
-    const activityId = externalId.substring(
-      identifierIndex + identifier.length
-    );
-
-    return activityId;
-  }
 }

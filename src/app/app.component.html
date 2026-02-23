@@ -24,12 +24,6 @@
         title="Strava">
         <i class="fab fa-strava fa-lg ml-1 mr-1"></i>
       </a>
-      <span>&nbsp;|&nbsp;</span>
-      @if (getGarminActivityId(lastVisibleActivity.external_id)) {
-        <a href="https://connect.garmin.com/modern/activity/{{getGarminActivityId(lastVisibleActivity.external_id)}}"
-          target="_blank"
-          title="Garmin"><i class="fas fa-caret-square-up fa-lg ml-1 mr-1"></i></a>
-        }
       </span>
       @if (loaded) {
         <span class="navbar-text small summary pt-0 pb-0 mb-2 mt-n1"
